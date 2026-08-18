@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 export default function Login({ status, canResetPassword = true }: { status?: string; canResetPassword?: boolean }) {
+  const [showPassword, setShowPassword] = useState(false);
   const { data, setData, post, processing, errors, reset } = useForm({
     email: '',
     password: '',
@@ -94,26 +95,31 @@ export default function Login({ status, canResetPassword = true }: { status?: st
             </div>
 
             <div>
-              <div className="flex justify-between items-baseline mb-1.5">
-                <label className="text-xs font-bold text-slate-700 block uppercase tracking-wide">Password</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1.5 uppercase tracking-wide">Password</label>
+              <div className="relative group">
+                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={data.password}
+                  onChange={(e) => setData('password', e.target.value)}
+                  placeholder="Password"
+                  required
+                  className="w-full pl-12 pr-12 py-3.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 bg-slate-50 text-slate-900 focus:bg-white transition-all shadow-sm"
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 focus:outline-none transition-colors flex items-center justify-center">
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              <div className="flex justify-between items-start mt-2">
+                <div className="flex-1">
+                  {errors.password && <p className="text-xs text-red-500 font-medium">{errors.password}</p>}
+                </div>
                 {canResetPassword && (
                   <Link href="/forgot-password" className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline font-semibold transition-colors">
                     Lupa password?
                   </Link>
                 )}
               </div>
-              <div className="relative group">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
-                <input
-                  type="password"
-                  value={data.password}
-                  onChange={(e) => setData('password', e.target.value)}
-                  placeholder="Password"
-                  required
-                  className="w-full pl-12 pr-4 py-3.5 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 bg-slate-50 text-slate-900 focus:bg-white transition-all shadow-sm"
-                />
-              </div>
-              {errors.password && <p className="text-xs text-red-500 mt-1.5 font-medium">{errors.password}</p>}
             </div>
 
             <div className="flex items-center justify-between pt-1">
