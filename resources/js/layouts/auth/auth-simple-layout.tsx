@@ -46,7 +46,7 @@ export default function AuthSimpleLayout({
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-6">
-          © {new Date().getFullYear()} Growigo Indonesia. All rights reserved.
+          © {new Date().getFullYear()} <a href="https://growigo.biz.id" target="_blank" rel="noopener noreferrer" className="underline hover:text-indigo-400 transition-colors">Growigo Indonesia</a>. All rights reserved.
         </p>
       </div>
     </div>
