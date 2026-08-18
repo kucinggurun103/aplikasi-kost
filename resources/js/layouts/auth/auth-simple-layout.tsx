@@ -46,7 +46,7 @@ export default function AuthSimpleLayout({
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-6">
-          © {new Date().getFullYear()} CozQta Indonesia. All rights reserved.
+          © {new Date().getFullYear()} Growigo Indonesia. All rights reserved.
         </p>
       </div>
     </div>

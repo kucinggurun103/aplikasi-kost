@@ -886,7 +886,7 @@ export function Footer() {
 
         {/* Copyright & Info */}
         <div className="border-t border-slate-800/80 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-slate-500 text-sm">© {new Date().getFullYear()} {webSettings?.site_name || 'CozQta'}. All rights reserved.</p>
+          <p className="text-slate-500 text-sm">© {new Date().getFullYear()} {webSettings?.site_name || 'Growigo Indonesia'}. All rights reserved.</p>
         </div>
       </div>
     </footer>
