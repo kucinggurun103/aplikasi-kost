@@ -199,6 +199,7 @@ export default function AdminFacilities({ facilities = [], branches = [] }: { fa
           <table className="w-full">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">No</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Ikon</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Fasilitas</th>
               {branches.length > 0 && <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Cabang</th>}
@@ -209,9 +210,10 @@ export default function AdminFacilities({ facilities = [], branches = [] }: { fa
           </thead>
           <tbody className="divide-y divide-slate-50">
             {facilities.length === 0 ? (
-              <tr><td colSpan={branches.length > 0 ? 6 : 5} className="p-8 text-center text-slate-400">Belum ada data fasilitas.</td></tr>
-            ) : facilities.map(item => (
+              <tr><td colSpan={branches.length > 0 ? 7 : 6} className="p-8 text-center text-slate-400">Belum ada data fasilitas.</td></tr>
+            ) : facilities.map((item, index) => (
               <tr key={item?.id || Math.random()} className="hover:bg-slate-50/50 transition-colors">
+                <td className="px-6 py-4 text-sm text-slate-500">{index + 1}</td>
                 <td className="px-6 py-4 text-slate-500">{renderIcon(item?.icon)}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 uppercase">{item?.name}</td>
                 {branches.length > 0 && (
@@ -232,8 +234,8 @@ export default function AdminFacilities({ facilities = [], branches = [] }: { fa
                 <td className="px-6 py-4 text-sm text-slate-500">{item?.description || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => openEdit(item)} className="px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit"><Edit size={14}/> Edit</button>
-                    <button onClick={() => handleDelete(item?.id)} className="px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus"><Trash2 size={14}/> Hapus</button>
+                    <button onClick={() => openEdit(item)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors" title="Edit"><Edit size={16}/></button>
+                    <button onClick={() => handleDelete(item?.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors" title="Hapus"><Trash2 size={16}/></button>
                   </div>
                 </td>
               </tr>

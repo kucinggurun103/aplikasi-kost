@@ -52,13 +52,14 @@ export function AdminRooms({ roomView, setRoomView }: { roomView: "grid" | "list
           <div className="overflow-x-auto pb-2">
             <table className="w-full">
             <thead className="bg-slate-50">
-              <tr>{["Kamar", "Gedung", "Lantai", "Harga", "Tipe", "Fasilitas", "Status", "Aksi"].map(h => (
+              <tr>{["No", "Kamar", "Gedung", "Lantai", "Harga", "Tipe", "Fasilitas", "Status", "Aksi"].map(h => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {filtered.map(r => (
+              {filtered.map((r, index) => (
                 <tr key={r.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3 text-sm text-slate-500">{index + 1}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <img src={r.image} alt={r.name} className="w-10 h-8 rounded-lg object-cover bg-slate-100 flex-shrink-0" />
@@ -92,7 +93,7 @@ export function AdminRooms({ roomView, setRoomView }: { roomView: "grid" | "list
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map(r => (
+          {filtered.map((r, index) => (
             <div key={r.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
               <div className="relative">
                 <img src={r.image} alt={r.name} className="w-full h-36 object-cover bg-slate-100" />
@@ -137,13 +138,14 @@ export function AdminTenants() {
         <div className="overflow-x-auto pb-2">
           <table className="w-full">
           <thead className="bg-slate-50">
-            <tr>{["Penghuni", "Kamar", "Mulai Sewa", "Selesai", "Status", "Aksi"].map(h => (
+            <tr>{["No", "Penghuni", "Kamar", "Mulai Sewa", "Selesai", "Status", "Aksi"].map(h => (
               <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500">{h}</th>
             ))}</tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {filtered.map(t => (
+            {filtered.map((t, index) => (
               <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+                <td className="px-4 py-3 text-sm text-slate-500">{index + 1}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <Avatar src={t.avatar} name={t.name} size="sm" />
@@ -208,13 +210,14 @@ export function AdminPayments() {
         <div className="overflow-x-auto pb-2">
           <table className="w-full">
           <thead className="bg-slate-50">
-            <tr>{["ID", "Penghuni", "Kamar", "Jumlah", "Metode", "Tanggal", "Status", "Aksi"].map(h => (
+            <tr>{["No", "ID", "Penghuni", "Kamar", "Jumlah", "Metode", "Tanggal", "Status", "Aksi"].map(h => (
               <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 whitespace-nowrap">{h}</th>
             ))}</tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {TRANSACTIONS.map(t => (
+            {TRANSACTIONS.map((t, index) => (
               <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+                <td className="px-4 py-3 text-sm text-slate-500">{index + 1}</td>
                 <td className="px-4 py-3 text-xs font-mono text-slate-500">{t.id}</td>
                 <td className="px-4 py-3 text-sm font-medium text-slate-900">{t.tenant}</td>
                 <td className="px-4 py-3 text-sm text-slate-600">{t.room}</td>
@@ -855,9 +858,11 @@ export function AdminSocialLinks({ social = [] }: { social: any[] }) {
           <h3 className="font-bold text-sm text-slate-800">Daftar Social Media Terdaftar</h3>
           <span className="text-xs text-slate-400">{social.length} item</span>
         </div>
-        <table className="w-full">
+        <div className="overflow-x-auto pb-2">
+          <table className="w-full">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">No</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">Platform & Icon</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">URL Profil</th>
               <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500">Status</th>
@@ -868,12 +873,13 @@ export function AdminSocialLinks({ social = [] }: { social: any[] }) {
           <tbody className="divide-y divide-slate-50">
             {social.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-sm text-slate-400">
+                <td colSpan={6} className="p-8 text-center text-sm text-slate-400">
                   Belum ada link social media. Klik <b>"Tambah Social Media"</b> di atas untuk menambahkan akun media sosial Anda.
                 </td>
               </tr>
-            ) : social.map(item => (
+            ) : social.map((item, index) => (
               <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                <td className="px-4 py-3 text-sm text-slate-500">{index + 1}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     {getPlatformIcon(item.platform, item.icon)}
@@ -916,7 +922,8 @@ export function AdminSocialLinks({ social = [] }: { social: any[] }) {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   );
