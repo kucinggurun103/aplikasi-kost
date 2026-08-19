@@ -107,6 +107,7 @@ export default function AdminInvoices({ invoices }: { invoices: any[] }) {
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 whitespace-nowrap">No</th>
                 <th className="px-6 py-4 whitespace-nowrap">No. Tagihan</th>
                 <th className="px-6 py-4 whitespace-nowrap">Penyewa</th>
                 <th className="px-6 py-4 whitespace-nowrap">Rincian Sewa</th>
@@ -117,8 +118,9 @@ export default function AdminInvoices({ invoices }: { invoices: any[] }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {displayedInvoices.length > 0 ? displayedInvoices.map((invoice: any) => (
+              {displayedInvoices.length > 0 ? displayedInvoices.map((invoice: any, index: number) => (
                 <tr key={invoice.id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-indigo-600">{invoice.payment_no}</div>
                     <div className="text-xs text-slate-500">{new Date(invoice.created_at).toLocaleDateString()}</div>
@@ -169,7 +171,7 @@ export default function AdminInvoices({ invoices }: { invoices: any[] }) {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
                     <Receipt size={40} className="mx-auto text-slate-300 mb-3" />
                     Tidak ada antrian tagihan pending di kategori ini.
                   </td>

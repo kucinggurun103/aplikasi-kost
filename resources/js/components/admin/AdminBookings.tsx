@@ -177,6 +177,7 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 whitespace-nowrap">No</th>
                 <th className="px-6 py-4 whitespace-nowrap">ID Booking</th>
                 <th className="px-6 py-4 whitespace-nowrap">Penyewa</th>
                 <th className="px-6 py-4 whitespace-nowrap">Kamar / Cabang</th>
@@ -188,8 +189,9 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {bookings?.length > 0 ? bookings.map((booking: any) => (
+              {bookings?.length > 0 ? bookings.map((booking: any, index: number) => (
                 <tr key={booking.id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-indigo-600">{booking.booking_no}</div>
                     <div className="text-xs text-slate-500">{new Date(booking.created_at).toLocaleDateString()}</div>
@@ -250,8 +252,8 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
-                    Belum ada data booking saat ini.
+                  <td colSpan={9} className="px-6 py-12 text-center text-slate-500">
+                    <Calendar size={40} className="mx-auto text-slate-300 mb-3" />
                   </td>
                 </tr>
               )}
@@ -478,6 +480,7 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
                 <table className="w-full text-left text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
+                      <th className="px-4 py-3 font-semibold text-slate-700">No</th>
                       <th className="px-4 py-3 font-semibold text-slate-700">No. Tagihan</th>
                       <th className="px-4 py-3 font-semibold text-slate-700">Tenggat Waktu</th>
                       <th className="px-4 py-3 font-semibold text-slate-700">Nominal</th>
@@ -487,8 +490,9 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {currentBooking.payment_headers && currentBooking.payment_headers.length > 0 ? (
-                      currentBooking.payment_headers.map((inv: any) => (
+                      currentBooking.payment_headers.map((inv: any, index: number) => (
                         <tr key={inv.id}>
+                          <td className="px-4 py-3 text-slate-500">{index + 1}</td>
                           <td className="px-4 py-3 font-medium text-slate-900">{inv.payment_no}</td>
                           <td className="px-4 py-3 text-slate-600">
                             <div className="flex items-center gap-2">
@@ -535,7 +539,7 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
+                        <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
                           Tidak ada tagihan ditemukan.
                         </td>
                       </tr>

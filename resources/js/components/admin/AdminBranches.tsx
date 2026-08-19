@@ -235,6 +235,7 @@ export default function AdminBranches({ branches = [], operators = [] }: { branc
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">No</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Kode</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Nama Cabang</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Alamat & Kontak</th>
@@ -244,9 +245,10 @@ export default function AdminBranches({ branches = [], operators = [] }: { branc
             </thead>
             <tbody className="divide-y divide-slate-50">
               {branches.length === 0 ? (
-                <tr><td colSpan={5} className="p-8 text-center text-slate-400">Belum ada data cabang.</td></tr>
-              ) : branches.map(item => (
+                <tr><td colSpan={6} className="p-8 text-center text-slate-400">Belum ada data cabang.</td></tr>
+              ) : branches.map((item, index) => (
                 <tr key={item?.id || Math.random()} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item?.code}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-semibold">{item?.name}</td>
                   <td className="px-6 py-4 text-sm text-slate-500">

@@ -839,6 +839,7 @@ export default function AdminRoomTypes({
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">No</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipe Kamar</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Kategori / Cabang</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga</th>
@@ -848,10 +849,11 @@ export default function AdminRoomTypes({
             </thead>
             <tbody className="divide-y divide-slate-50">
               {roomTypes.length === 0 ? (
-                <tr><td colSpan={5} className="p-8 text-center text-slate-400">Belum ada data tipe kamar.</td></tr>
-              ) : roomTypes.map(item => (
+                <tr><td colSpan={6} className="p-8 text-center text-slate-400">Belum ada data tipe kamar.</td></tr>
+              ) : roomTypes.map((item, index) => (
                 <React.Fragment key={item?.id || Math.random()}>
                 <tr className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center">
@@ -908,7 +910,7 @@ export default function AdminRoomTypes({
                 </tr>
                 {expandedType === item.id && (
                   <tr key={`expanded-${item.id}`} className="bg-slate-50/50 border-b border-slate-100">
-                    <td colSpan={5} className="px-6 py-4">
+                    <td colSpan={6} className="px-6 py-4">
                       <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
                         <div className="flex items-center justify-between mb-4">
                           <h4 className="font-semibold text-slate-800 text-sm">Daftar Unit Kamar ({item.units?.length || 0})</h4>

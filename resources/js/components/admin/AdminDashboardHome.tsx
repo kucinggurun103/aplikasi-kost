@@ -94,13 +94,14 @@ export default function AdminDashboardHome({ stats }: { stats: any }) {
           <div className="overflow-x-auto pb-2">
             <table className="w-full">
               <thead className="bg-slate-50">
-                <tr>{["ID Transaksi", "Penghuni", "Kamar", "Jumlah", "Metode", "Tanggal", "Status"].map(h => (
+                <tr>{["No", "ID Transaksi", "Penghuni", "Kamar", "Jumlah", "Metode", "Tanggal", "Status"].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 whitespace-nowrap">{h}</th>
                 ))}</tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {TRANSACTIONS.map(t => (
+                {TRANSACTIONS.map((t, index) => (
                   <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-3 text-xs text-slate-500">{index + 1}</td>
                     <td className="px-4 py-3 text-xs font-mono text-slate-500">{t.id}</td>
                     <td className="px-4 py-3 text-sm font-medium text-slate-900 whitespace-nowrap">{t.tenant}</td>
                     <td className="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{t.room}</td>
@@ -123,6 +124,7 @@ export default function AdminDashboardHome({ stats }: { stats: any }) {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                  <th className="pb-2 pr-4">No</th>
                   <th className="pb-2 pr-4">ID Transaksi</th>
                   <th className="pb-2 pr-4">Penghuni</th>
                   <th className="pb-2 pr-4">Kamar</th>
@@ -134,8 +136,9 @@ export default function AdminDashboardHome({ stats }: { stats: any }) {
               </thead>
               <tbody className="text-xs divide-y divide-slate-50">
                 {as.recent_transactions && as.recent_transactions.length > 0 ? (
-                  as.recent_transactions.map((t: any) => (
+                  as.recent_transactions.map((t: any, index: number) => (
                     <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="py-2.5 pr-4 text-slate-500">{index + 1}</td>
                       <td className="py-2.5 pr-4 font-mono text-slate-500">{t.id}</td>
                       <td className="py-2.5 pr-4 font-medium text-slate-900 whitespace-nowrap">{t.tenant_name}</td>
                       <td className="py-2.5 pr-4 text-slate-600 whitespace-nowrap">{t.room_name}</td>
@@ -147,7 +150,7 @@ export default function AdminDashboardHome({ stats }: { stats: any }) {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="py-6 text-center text-slate-400">
+                    <td colSpan={8} className="py-6 text-center text-slate-400">
                       Belum ada transaksi bulan ini
                     </td>
                   </tr>

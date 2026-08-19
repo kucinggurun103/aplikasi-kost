@@ -40,6 +40,7 @@ export default function AdminTransactions({ transactions }: { transactions: any[
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 whitespace-nowrap">No</th>
                 <th className="px-6 py-4 whitespace-nowrap">ID Transaksi / Tgl</th>
                 <th className="px-6 py-4 whitespace-nowrap">Penyewa</th>
                 <th className="px-6 py-4 whitespace-nowrap">Cabang & Kamar</th>
@@ -49,8 +50,9 @@ export default function AdminTransactions({ transactions }: { transactions: any[
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {transactions?.length > 0 ? transactions.map((trx: any) => (
+              {transactions?.length > 0 ? transactions.map((trx: any, index: number) => (
                 <tr key={trx.id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-bold text-slate-900 flex items-center gap-1">
                       TRX-{trx.id} 
@@ -91,7 +93,8 @@ export default function AdminTransactions({ transactions }: { transactions: any[
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                    <Wallet size={40} className="mx-auto text-slate-300 mb-3" />
                     Belum ada riwayat transaksi.
                   </td>
                 </tr>

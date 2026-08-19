@@ -26,6 +26,7 @@ export default function AdminNotificationLogs({ logs }: { logs: any[] }) {
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 whitespace-nowrap">No</th>
                 <th className="px-6 py-4 whitespace-nowrap">Waktu</th>
                 <th className="px-6 py-4 whitespace-nowrap">Pengguna</th>
                 <th className="px-6 py-4 whitespace-nowrap">Penerima</th>
@@ -35,8 +36,9 @@ export default function AdminNotificationLogs({ logs }: { logs: any[] }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {logs?.length > 0 ? logs.map((log: any) => (
+              {logs?.length > 0 ? logs.map((log: any, index: number) => (
                 <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-slate-900">
                       {new Date(log.created_at || log.sent_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
@@ -79,8 +81,8 @@ export default function AdminNotificationLogs({ logs }: { logs: any[] }) {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                    <Send size={40} className="mx-auto text-slate-300 mb-3" />
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                    <Bell size={40} className="mx-auto text-slate-300 mb-3" />
                     Belum ada log pengiriman notifikasi.
                   </td>
                 </tr>

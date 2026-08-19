@@ -57,7 +57,9 @@ export function AdminRooms({ roomView, setRoomView }: { roomView: "grid" | "list
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {filtered.map((r, index) => (
+              {filtered.length === 0 ? (
+                <tr><td colSpan={9} className="p-8 text-center text-sm text-slate-400">Belum ada data kamar.</td></tr>
+              ) : filtered.map((r, index) => (
                 <tr key={r.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-3 text-sm text-slate-500">{index + 1}</td>
                   <td className="px-4 py-3">
@@ -143,7 +145,9 @@ export function AdminTenants() {
             ))}</tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {filtered.map((t, index) => (
+            {filtered.length === 0 ? (
+              <tr><td colSpan={7} className="p-8 text-center text-sm text-slate-400">Belum ada data penghuni.</td></tr>
+            ) : filtered.map((t, index) => (
               <tr key={t.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-4 py-3 text-sm text-slate-500">{index + 1}</td>
                 <td className="px-4 py-3">
@@ -215,7 +219,9 @@ export function AdminPayments() {
             ))}</tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {TRANSACTIONS.map((t, index) => (
+            {TRANSACTIONS.length === 0 ? (
+              <tr><td colSpan={9} className="p-8 text-center text-sm text-slate-400">Belum ada data pembayaran.</td></tr>
+            ) : TRANSACTIONS.map((t, index) => (
               <tr key={t.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-4 py-3 text-sm text-slate-500">{index + 1}</td>
                 <td className="px-4 py-3 text-xs font-mono text-slate-500">{t.id}</td>

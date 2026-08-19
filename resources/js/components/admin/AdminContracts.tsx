@@ -64,6 +64,7 @@ export default function AdminContracts({ contracts }: { contracts: any[] }) {
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 whitespace-nowrap">No</th>
                 <th className="px-6 py-4 whitespace-nowrap">No Kontrak</th>
                 <th className="px-6 py-4 whitespace-nowrap">Penghuni</th>
                 <th className="px-6 py-4 whitespace-nowrap">Kamar</th>
@@ -74,12 +75,13 @@ export default function AdminContracts({ contracts }: { contracts: any[] }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {contracts?.length > 0 ? contracts.map((contract: any) => {
+              {contracts?.length > 0 ? contracts.map((contract: any, index: number) => {
                 const expiring = contract.status === 'Active' && isExpiringSoon(contract.end_date);
                 const expired = contract.status === 'Active' && isExpired(contract.end_date);
                 
                 return (
                   <tr key={contract.id} className={`hover:bg-slate-50/50 transition-colors ${expiring ? 'bg-orange-50/30' : ''} ${expired ? 'bg-red-50/30' : ''}`}>
+                    <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="font-semibold text-slate-900">{contract.contract_number}</div>
                       <div className="text-xs text-slate-500">Ref: {contract.booking_header?.booking_no}</div>
@@ -137,8 +139,8 @@ export default function AdminContracts({ contracts }: { contracts: any[] }) {
                 );
               }) : (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                    Belum ada kontrak aktif.
+                  <td colSpan={8} className="px-6 py-8 text-center text-slate-500">
+                    Belum ada data kontrak. aktif.
                   </td>
                 </tr>
               )}

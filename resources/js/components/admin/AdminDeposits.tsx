@@ -66,6 +66,7 @@ export default function AdminDeposits({ deposits }: { deposits: any[] }) {
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 whitespace-nowrap">No</th>
                 <th className="px-6 py-4 whitespace-nowrap">ID Booking</th>
                 <th className="px-6 py-4 whitespace-nowrap">Penyewa</th>
                 <th className="px-6 py-4 whitespace-nowrap">Kamar / Cabang</th>
@@ -75,8 +76,9 @@ export default function AdminDeposits({ deposits }: { deposits: any[] }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {displayedDeposits.length > 0 ? displayedDeposits.map((dep: any) => (
+              {displayedDeposits.length > 0 ? displayedDeposits.map((dep: any, index: number) => (
                 <tr key={dep.id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-indigo-600">{dep.booking_no}</div>
                     <div className="text-xs text-slate-500">{new Date(dep.created_at).toLocaleDateString()}</div>
@@ -114,7 +116,7 @@ export default function AdminDeposits({ deposits }: { deposits: any[] }) {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
                     <Wallet size={40} className="mx-auto text-slate-300 mb-3" />
                     Tidak ada data deposit di kategori ini.
                   </td>

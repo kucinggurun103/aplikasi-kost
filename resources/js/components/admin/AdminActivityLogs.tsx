@@ -25,6 +25,7 @@ export default function AdminActivityLogs({ logs }: { logs: any[] }) {
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 whitespace-nowrap">No</th>
                 <th className="px-6 py-4 whitespace-nowrap">Waktu</th>
                 <th className="px-6 py-4 whitespace-nowrap">Pengguna (Aktor)</th>
                 <th className="px-6 py-4 whitespace-nowrap">Aktivitas</th>
@@ -33,8 +34,9 @@ export default function AdminActivityLogs({ logs }: { logs: any[] }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {logs?.length > 0 ? logs.map((log: any) => (
+              {logs?.length > 0 ? logs.map((log: any, index: number) => (
                 <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-slate-900">
                       {new Date(log.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -87,7 +89,7 @@ export default function AdminActivityLogs({ logs }: { logs: any[] }) {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
                     <Shield size={40} className="mx-auto text-slate-300 mb-3" />
                     Belum ada log aktivitas yang terekam.
                   </td>

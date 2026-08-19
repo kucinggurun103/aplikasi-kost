@@ -170,6 +170,7 @@ function RoleManager({ roles = [] }: { roles: any[] }) {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100 text-xs uppercase text-slate-500 font-bold">
+                <th className="px-6 py-4">No</th>
                 <th className="px-6 py-4">Nama Role</th>
                 <th className="px-6 py-4">Kode</th>
                 <th className="px-6 py-4">Akses Cabang</th>
@@ -178,9 +179,10 @@ function RoleManager({ roles = [] }: { roles: any[] }) {
             </thead>
             <tbody className="text-sm divide-y divide-slate-100">
               {roles.length === 0 ? (
-                <tr><td colSpan={4} className="px-6 py-8 text-center text-slate-400">Belum ada data role</td></tr>
-              ) : roles.map((item: any) => (
+                <tr><td colSpan={5} className="px-6 py-8 text-center text-slate-400">Belum ada data role</td></tr>
+              ) : roles.map((item: any, index: number) => (
                 <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 font-bold text-slate-900">
                     {item.name}
                     <div className="text-xs text-slate-500 font-normal mt-1">{item.description}</div>
@@ -233,7 +235,7 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
       name: item.name,
       email: item.email,
       password: '', // blank when editing
-      roles: item.roles && item.roles.length > 0 ? [item.roles[0].id] : [],
+      roles: item.roles && item.roles.length > 0 ? [item.roles[0].id] : (type === 'tenants' ? [roles.find((r:any) => r.code === 'tenant')?.id].filter(Boolean) : []),
     });
   };
 
@@ -241,6 +243,18 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
     setIsEditing(null);
     setShowForm(false);
     reset();
+  };
+
+  const handleOpenCreate = () => {
+    const tenantRole = roles.find((r:any) => r.code === 'tenant');
+    setData({
+      name: '',
+      email: '',
+      password: '',
+      roles: type === 'tenants' && tenantRole ? [tenantRole.id] : [],
+    });
+    setShowForm(true);
+    setIsEditing(null);
   };
 
   const submit = (e: React.FormEvent) => {
@@ -330,7 +344,8 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
           className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition-colors"
           onClick={() => {
             if (showForm && isEditing) closeEdit();
-            else setShowForm(!showForm);
+            else if (!showForm) handleOpenCreate();
+            else setShowForm(false);
           }}
         >
           <div>
@@ -348,12 +363,12 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap</label>
-                  <input required type="text" value={data.name} onChange={e => setData('name', e.target.value)} className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500" />
+                  <input required type="text" value={data.name} onChange={e => setData('name', e.target.value)} className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: Budi Santoso" />
                   {errors.name && <div className="text-red-500 text-xs mt-1">{errors.name}</div>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Email</label>
-                  <input required type="email" value={data.email} onChange={e => setData('email', e.target.value)} className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500" />
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Username / Email</label>
+                  <input required type="email" value={data.email} onChange={e => setData('email', e.target.value)} className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: budi@gmail.com" />
                   {errors.email && <div className="text-red-500 text-xs mt-1">{errors.email}</div>}
                 </div>
               </div>
@@ -370,7 +385,7 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-3">Role / Hak Akses (Pilih Satu) <span className="text-red-500">*</span></label>
                   <div className="flex flex-wrap gap-3">
-                    {roles.map((role: any) => (
+                    {roles.filter((r: any) => r.code !== 'tenant').map((role: any) => (
                       <label key={role.id} className={`flex items-center gap-2 px-4 py-2 rounded-xl border cursor-pointer transition-all duration-200 ${data.roles.includes(role.id) ? 'bg-indigo-50 border-indigo-400 text-indigo-700 shadow-sm ring-1 ring-indigo-400' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'}`}>
                         <input 
                           type="radio" 
@@ -402,6 +417,7 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100 text-xs uppercase text-slate-500 font-bold">
+                <th className="px-6 py-4">No</th>
                 <th className="px-6 py-4">User</th>
                 <th className="px-6 py-4">Roles</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
@@ -409,9 +425,10 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
             </thead>
             <tbody className="text-sm divide-y divide-slate-100">
               {users.length === 0 ? (
-                <tr><td colSpan={3} className="px-6 py-8 text-center text-slate-400">Belum ada data {type === 'staff' ? 'staff' : 'penghuni'}</td></tr>
-              ) : users.map((item: any) => (
+                <tr><td colSpan={4} className="px-6 py-8 text-center text-slate-400">Belum ada data {type === 'staff' ? 'staff' : 'penghuni'}</td></tr>
+              ) : users.map((item: any, index: number) => (
                 <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4">
                     <div className="font-bold text-slate-900">{item.name}</div>
                     <div className="text-xs text-slate-500">{item.email}</div>

@@ -127,6 +127,7 @@ export default function AdminCategories({ categories = [], branches = [] }: { ca
         <table className="w-full">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">No</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Kategori</th>
               {branches.length > 0 && <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Cabang</th>}
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Deskripsi</th>
@@ -135,9 +136,10 @@ export default function AdminCategories({ categories = [], branches = [] }: { ca
           </thead>
           <tbody className="divide-y divide-slate-50">
             {categories.length === 0 ? (
-              <tr><td colSpan={branches.length > 0 ? 4 : 3} className="p-8 text-center text-slate-400">Belum ada data kategori.</td></tr>
-            ) : categories.map(item => (
+              <tr><td colSpan={branches.length > 0 ? 5 : 4} className="p-8 text-center text-slate-400">Belum ada data kategori.</td></tr>
+            ) : categories.map((item, index) => (
               <tr key={item?.id || Math.random()} className="hover:bg-slate-50/50 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{index + 1}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item?.name}</td>
                 {branches.length > 0 && (
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
