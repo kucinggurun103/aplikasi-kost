@@ -56,6 +56,7 @@ if (!function_exists('mapRoomUnit')) {
             'size' => (float) ($room->room_size ?? 0),
             'floor' => $unit->floor ?? 1,
             'building' => $unit->building_name ?? ($room->branch ? $room->branch->name : '-'),
+            'description' => $room->description,
             'whatsapp' => $room->branch ? $room->branch->phone : null,
             'electricity_included' => (bool) ($room->electricity_included ?? false),
             'water_included' => (bool) ($room->water_included ?? false),

@@ -474,7 +474,7 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
             </div>
             
             <div className="p-5 overflow-y-auto">
-              <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <div className="border border-slate-200 rounded-xl overflow-hidden overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>

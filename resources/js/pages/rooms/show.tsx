@@ -89,7 +89,10 @@ export default function RoomShow({ room: propRoom, similarRooms: propSimilar }: 
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased flex flex-col justify-between">
-      <Head title={`${room.name} — CozQta`} />
+      <Head title={`${room.name} — CozQta`}>
+        {room.description && <meta head-key="description" name="description" content={room.description} />}
+        {room.description && <meta head-key="og:description" property="og:description" content={room.description} />}
+      </Head>
       <Navbar />
 
       <main className="flex-1 pt-20 pb-16">

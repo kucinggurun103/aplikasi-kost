@@ -93,21 +93,24 @@ export default function AdminFacilities({ facilities = [], branches = [] }: { fa
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6 animate-fade-in">
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div 
-          className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition-colors"
-          onClick={() => {
-            if (showForm && isEditing) {
-              closeEdit();
-            } else {
-              setShowForm(!showForm);
-            }
-          }}
-        >
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 gap-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">{isEditing ? 'Edit Fasilitas' : 'Tambah Fasilitas Baru'}</h2>
-            {!showForm && !isEditing && <p className="text-sm text-slate-500 mt-1">Klik untuk menambahkan fasilitas baru</p>}
+            <h2 className="text-lg font-bold text-slate-900">{isEditing ? 'Edit Fasilitas' : 'Fasilitas'}</h2>
+            <p className="text-sm text-slate-500 mt-1">Kelola daftar fasilitas yang tersedia</p>
           </div>
-          <ChevronDown className={`text-slate-400 transition-transform duration-300 ${showForm ? 'rotate-180' : ''}`} size={24} />
+          <Btn 
+            onClick={() => {
+              if (showForm && isEditing) {
+                closeEdit();
+              } else {
+                setShowForm(!showForm);
+              }
+            }}
+            className="flex items-center gap-2"
+          >
+            {showForm && !isEditing ? 'Tutup Form' : isEditing ? 'Batal Edit' : 'Tambah Fasilitas Baru'}
+            <ChevronDown className={`transition-transform duration-300 ${showForm ? 'rotate-180' : ''}`} size={16} />
+          </Btn>
         </div>
 
         {showForm && (
@@ -192,7 +195,8 @@ export default function AdminFacilities({ facilities = [], branches = [] }: { fa
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto pb-2">
+          <table className="w-full">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Ikon</th>
@@ -236,6 +240,7 @@ export default function AdminFacilities({ facilities = [], branches = [] }: { fa
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

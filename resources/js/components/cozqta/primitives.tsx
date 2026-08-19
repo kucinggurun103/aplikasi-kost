@@ -249,6 +249,12 @@ export function RoomCard({
           <MapPin size={11} /><span className="line-clamp-1">{room.address}</span>
         </div>
         
+        {room.description && (
+          <p className="text-slate-500 text-xs mb-3 line-clamp-2 leading-relaxed">
+            {room.description}
+          </p>
+        )}
+
         <div className="flex flex-wrap items-center gap-1.5 mb-3">
           {room.size > 0 && (
             <span className="bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded text-[10px] font-medium border border-indigo-100">

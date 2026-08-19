@@ -91,7 +91,7 @@ export default function AdminDashboardHome({ stats }: { stats: any }) {
             <h3 className="font-semibold text-slate-900">Transaksi Terkini</h3>
             <Btn variant="outline" size="sm" onClick={() => {}}><Eye size={13} /> Lihat Semua</Btn>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto pb-2">
             <table className="w-full">
               <thead className="bg-slate-50">
                 <tr>{["ID Transaksi", "Penghuni", "Kamar", "Jumlah", "Metode", "Tanggal", "Status"].map(h => (
@@ -119,7 +119,7 @@ export default function AdminDashboardHome({ stats }: { stats: any }) {
             <h3 className="font-semibold text-slate-900">Transaksi Terkini</h3>
             <button className="text-xs font-semibold text-indigo-600 hover:underline">Lihat Semua</button>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto pb-2">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100 text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
@@ -137,8 +137,8 @@ export default function AdminDashboardHome({ stats }: { stats: any }) {
                   as.recent_transactions.map((t: any) => (
                     <tr key={t.id} className="hover:bg-slate-50 transition-colors">
                       <td className="py-2.5 pr-4 font-mono text-slate-500">{t.id}</td>
-                      <td className="py-2.5 pr-4 font-medium text-slate-900">{t.tenant_name}</td>
-                      <td className="py-2.5 pr-4 text-slate-600">{t.room_name}</td>
+                      <td className="py-2.5 pr-4 font-medium text-slate-900 whitespace-nowrap">{t.tenant_name}</td>
+                      <td className="py-2.5 pr-4 text-slate-600 whitespace-nowrap">{t.room_name}</td>
                       <td className="py-2.5 pr-4 font-semibold text-slate-900">{fmt(t.amount)}</td>
                       <td className="py-2.5 pr-4 text-slate-500">{t.method}</td>
                       <td className="py-2.5 pr-4 text-slate-400 whitespace-nowrap">{t.date}</td>
