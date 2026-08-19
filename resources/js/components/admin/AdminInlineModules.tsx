@@ -49,8 +49,8 @@ export function AdminRooms({ roomView, setRoomView }: { roomView: "grid" | "list
       </div>
       {roomView === "list" ? (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto pb-2">
-          <table className="w-full">
+          <div className="overflow-x-auto pb-2">
+            <table className="w-full">
             <thead className="bg-slate-50">
               <tr>{["Kamar", "Gedung", "Lantai", "Harga", "Tipe", "Fasilitas", "Status", "Aksi"].map(h => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 whitespace-nowrap">{h}</th>
@@ -76,41 +76,14 @@ export function AdminRooms({ roomView, setRoomView }: { roomView: "grid" | "list
                       <Link href={`/rooms/${r.id}`} className="w-7 h-7 rounded-lg hover:bg-indigo-50 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"><Eye size={13} /></Link>
                       <button className="w-7 h-7 rounded-lg hover:bg-amber-50 flex items-center justify-center text-slate-400 hover:text-amber-600 transition-colors"><Edit size={13} /></button>
                       <button className="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-400 hover:text-red-600 transition-colors"><Trash2 size={13} /></button>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-50">
-                <tr>{["Kamar", "Gedung", "Lantai", "Harga", "Tipe", "Fasilitas", "Status", "Aksi"].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 whitespace-nowrap">{h}</th>
-                ))}</tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {filtered.map(r => (
-                  <tr key={r.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <img src={r.image} alt={r.name} className="w-10 h-8 rounded-lg object-cover bg-slate-100 flex-shrink-0" />
-                        <p className="text-sm font-medium text-slate-900 line-clamp-1 max-w-32">{r.name}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{r.building}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600">Lt. {r.floor}</td>
-                    <td className="px-4 py-3 text-sm font-semibold text-indigo-600">{fmtShort(r.price)}</td>
-                    <td className="px-4 py-3"><Badge variant="outline">{r.type}</Badge></td>
-                    <td className="px-4 py-3"><div className="flex gap-1">{r.facilities.slice(0, 2).map(f => <Badge key={f} variant="default">{f}</Badge>)}{r.facilities.length > 2 && <Badge variant="outline">+{r.facilities.length - 2}</Badge>}</div></td>
-                    <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        <Link href={`/rooms/${r.id}`} className="w-7 h-7 rounded-lg hover:bg-indigo-50 flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"><Eye size={13} /></Link>
-                        <button className="w-7 h-7 rounded-lg hover:bg-amber-50 flex items-center justify-center text-slate-400 hover:text-amber-600 transition-colors"><Edit size={13} /></button>
-                        <button className="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-400 hover:text-red-600 transition-colors"><Trash2 size={13} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="px-4 py-3 border-t border-slate-100 flex items-center justify-between">
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="px-4 py-3 border-t border-slate-100 flex items-center justify-between">
             <p className="text-xs text-slate-400">Menampilkan {filtered.length} dari {ROOMS.length} kamar</p>
             <div className="flex gap-1">
               {[1, 2, 3].map(p => <button key={p} className={`w-7 h-7 rounded-lg text-xs font-medium ${p === 1 ? "bg-indigo-600 text-white" : "text-slate-500 hover:bg-slate-100"}`}>{p}</button>)}
@@ -163,14 +136,14 @@ export function AdminTenants() {
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto pb-2">
           <table className="w-full">
-            <thead className="bg-slate-50">
-              <tr>{["Penghuni", "Kamar", "Mulai Sewa", "Selesai", "Status", "Aksi"].map(h => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 whitespace-nowrap">{h}</th>
-              ))}</tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {filtered.map(t => (
-                <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+          <thead className="bg-slate-50">
+            <tr>{["Penghuni", "Kamar", "Mulai Sewa", "Selesai", "Status", "Aksi"].map(h => (
+              <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500">{h}</th>
+            ))}</tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {filtered.map(t => (
+              <tr key={t.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <Avatar src={t.avatar} name={t.name} size="sm" />
@@ -194,7 +167,7 @@ export function AdminTenants() {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
         </div>
         <div className="px-4 py-3 border-t border-slate-100 flex items-center justify-between">
           <p className="text-xs text-slate-400">Menampilkan {filtered.length} penghuni</p>
@@ -234,14 +207,14 @@ export function AdminPayments() {
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto pb-2">
           <table className="w-full">
-            <thead className="bg-slate-50">
-              <tr>{["ID", "Penghuni", "Kamar", "Jumlah", "Metode", "Tanggal", "Status", "Aksi"].map(h => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 whitespace-nowrap">{h}</th>
-              ))}</tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {TRANSACTIONS.map(t => (
-                <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+          <thead className="bg-slate-50">
+            <tr>{["ID", "Penghuni", "Kamar", "Jumlah", "Metode", "Tanggal", "Status", "Aksi"].map(h => (
+              <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 whitespace-nowrap">{h}</th>
+            ))}</tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {TRANSACTIONS.map(t => (
+              <tr key={t.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-4 py-3 text-xs font-mono text-slate-500">{t.id}</td>
                 <td className="px-4 py-3 text-sm font-medium text-slate-900">{t.tenant}</td>
                 <td className="px-4 py-3 text-sm text-slate-600">{t.room}</td>
@@ -260,7 +233,7 @@ export function AdminPayments() {
             ))}
           </tbody>
         </table>
-        </div>
+      </div>
       </div>
     </div>
   );
@@ -882,10 +855,9 @@ export function AdminSocialLinks({ social = [] }: { social: any[] }) {
           <h3 className="font-bold text-sm text-slate-800">Daftar Social Media Terdaftar</h3>
           <span className="text-xs text-slate-400">{social.length} item</span>
         </div>
-        <div className="overflow-x-auto pb-2">
-          <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-100">
-              <tr>
+        <table className="w-full">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">Platform & Icon</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">URL Profil</th>
               <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500">Status</th>
@@ -945,7 +917,6 @@ export function AdminSocialLinks({ social = [] }: { social: any[] }) {
             ))}
           </tbody>
         </table>
-        </div>
       </div>
     </div>
   );

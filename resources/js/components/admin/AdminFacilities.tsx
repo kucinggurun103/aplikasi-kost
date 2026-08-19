@@ -232,8 +232,8 @@ export default function AdminFacilities({ facilities = [], branches = [] }: { fa
                 <td className="px-6 py-4 text-sm text-slate-500">{item?.description || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => openEdit(item)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors" title="Edit"><Edit size={16}/></button>
-                    <button onClick={() => handleDelete(item?.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors" title="Hapus"><Trash2 size={16}/></button>
+                    <button onClick={() => openEdit(item)} className="px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit"><Edit size={14}/> Edit</button>
+                    <button onClick={() => handleDelete(item?.id)} className="px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus"><Trash2 size={14}/> Hapus</button>
                   </div>
                 </td>
               </tr>
