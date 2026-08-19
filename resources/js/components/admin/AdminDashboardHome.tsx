@@ -156,31 +156,7 @@ export default function AdminDashboardHome({ stats }: { stats: any }) {
             </table>
           </div>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-          <h3 className="font-semibold text-slate-900 mb-4">Penghuni Terbaru</h3>
-          <div className="space-y-3">
-            {TENANTS.map(t => (
-              <div key={t.id} className="flex items-center gap-3">
-                <Avatar src={t.avatar} name={t.name} size="sm" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-900 truncate">{t.name}</p>
-                  <p className="text-xs text-slate-400 truncate">{t.room} · s/d {t.until}</p>
-                </div>
-                <StatusBadge status={t.status} />
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 pt-4 border-t border-slate-100">
-            <h4 className="text-xs font-semibold text-slate-500 mb-3">Aksi Cepat</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {[{ icon: Plus, label: "Tambah Kamar", href: "/rooms/create" }, { icon: Users, label: "Tambah Penghuni" }, { icon: Download, label: "Export Data" }, { icon: FileText, label: "Buat Laporan" }].map(a => (
-                <Link key={a.label} href={a.href || "#"} className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-indigo-50 rounded-xl text-xs font-medium text-slate-700 hover:text-indigo-700 transition-colors">
-                  <a.icon size={13} className="flex-shrink-0" /><span className="truncate">{a.label}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
   );

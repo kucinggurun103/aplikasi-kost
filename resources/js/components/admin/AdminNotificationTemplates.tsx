@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
 import { Plus, BellRing, Mail, MessageSquare, Trash2, Edit2, XCircle } from 'lucide-react';
 import { Btn, Badge } from '@/components/cozqta/primitives';
 
@@ -78,7 +78,7 @@ export default function AdminNotificationTemplates({ templates }: { templates: a
 
   const deleteTemplate = (id: number) => {
     if (confirm("Hapus template notifikasi ini?")) {
-      useForm().delete(`/admin/settings/notification-templates/${id}`, { preserveScroll: true });
+      router.delete(`/admin/settings/notification-templates/${id}`, { preserveScroll: true });
     }
   };
 

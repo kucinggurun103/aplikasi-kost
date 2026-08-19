@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
 import { Plus, CreditCard, Banknote, QrCode, Trash2, Edit2, CheckCircle2, XCircle } from 'lucide-react';
 import { Btn, Badge, SearchableSelect } from '@/components/cozqta/primitives';
 
@@ -87,7 +87,7 @@ export default function AdminPaymentConfig({ gateways, branches = [] }: { gatewa
 
   const deleteGateway = (id: number) => {
     if (confirm("Hapus metode pembayaran ini?")) {
-      useForm().delete(`/admin/settings/payment-gateways/${id}`, { preserveScroll: true });
+      router.delete(`/admin/settings/payment-gateways/${id}`, { preserveScroll: true });
     }
   };
 

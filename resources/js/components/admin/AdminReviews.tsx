@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
 import { Plus, Star, MessageCircle, MapPin, Trash2, Edit2, XCircle } from 'lucide-react';
 import { Btn, Badge, SearchableSelect } from '@/components/cozqta/primitives';
 
@@ -57,7 +57,7 @@ export default function AdminReviews({ reviews, branches }: { reviews: any[], br
 
   const deleteReview = (id: number) => {
     if (confirm("Hapus ulasan ini?")) {
-      useForm().delete(`/admin/settings/reviews/${id}`, { preserveScroll: true });
+      router.delete(`/admin/settings/reviews/${id}`, { preserveScroll: true });
     }
   };
 
