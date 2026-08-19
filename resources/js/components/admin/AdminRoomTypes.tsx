@@ -217,7 +217,17 @@ export default function AdminRoomTypes({
     });
 
     if (formValues) {
-      router.post(`/admin/master/room-units/${typeId}`, formValues, { preserveScroll: true });
+      router.post(`/admin/master/room-units/${typeId}`, formValues, { 
+        preserveScroll: true,
+        onError: (errors) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal Menambahkan Unit',
+            text: errors.unit_prefix || 'Terjadi kesalahan saat menambahkan unit. Pastikan unit belum ada.',
+            confirmButtonText: 'Tutup'
+          });
+        }
+      });
     }
   };
 

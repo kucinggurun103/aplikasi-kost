@@ -22,9 +22,12 @@ class RoomUnitController extends Controller
         $floor = $request->input('floor');
         $floorText = $floor ? 'Lantai '.$floor : 'Lantai 1';
 
+        $unitsToCreate = [];
+        $existingUnits = [];
+
         for ($i = 0; $i < $amount; $i++) {
             $currentIndex = $startNumber + $i;
-            $count = $roomType->units()->withTrashed()->count(); // for internal unique code
+            $count = $roomType->units()->withTrashed()->count() + $i; // for internal unique code
             $unitCode = $roomType->type_code.'-U'.str_pad($count + 1, 2, '0', STR_PAD_LEFT);
             
             $unitIdentifier = (string) $currentIndex;
@@ -42,15 +45,34 @@ class RoomUnitController extends Controller
             $prefix = trim($unitPrefix);
             $unitName = $prefix !== '' ? $prefix.' '.$unitIdentifier : $unitIdentifier;
 
-            RoomUnit::create([
-                'room_type_id' => $roomType->id,
-                'unit_code' => $unitCode,
-                'unit_number' => $unitName,
-                'floor' => $floorText,
-                'status' => 'Available',
-                'is_active' => true,
+            // Check if unit number already exists
+            $exists = RoomUnit::where('room_type_id', $roomType->id)
+                ->where('unit_number', $unitName)
+                ->exists();
+
+            if ($exists) {
+                $existingUnits[] = $unitName;
+            } else {
+                $unitsToCreate[] = [
+                    'room_type_id' => $roomType->id,
+                    'unit_code' => $unitCode,
+                    'unit_number' => $unitName,
+                    'floor' => $floorText,
+                    'status' => 'Available',
+                    'is_active' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        if (count($existingUnits) > 0) {
+            return redirect()->back()->withErrors([
+                'unit_prefix' => 'Unit dengan nomor/nama berikut sudah ada: ' . implode(', ', $existingUnits) . '. Silakan ubah Awalan atau Nomor Mulai.'
             ]);
         }
+
+        RoomUnit::insert($unitsToCreate);
 
         return redirect()->back()->with('success', $amount.' Unit kamar berhasil ditambahkan');
     }
