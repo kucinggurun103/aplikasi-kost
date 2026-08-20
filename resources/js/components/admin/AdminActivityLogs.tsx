@@ -39,10 +39,10 @@ export default function AdminActivityLogs({ logs }: { logs: any[] }) {
                   <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-slate-900">
-                      {new Date(log.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      {log.created_at ? new Date(log.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                     </div>
-                    <div className="text-xs text-slate-500">
-                      {new Date(log.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                    <div className="text-xs text-slate-500 mt-0.5">
+                      {log.created_at ? new Date(log.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-'}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

@@ -59,10 +59,10 @@ export default function AdminTransactions({ transactions }: { transactions: any[
                       {trx.status === 'Paid' && <ArrowUpRight size={14} className="text-green-500" />}
                     </div>
                     <div className="text-xs text-slate-500 mt-0.5">
-                      {new Date(trx.created_at).toLocaleString('id-ID', {
+                      {trx.created_at ? new Date(trx.created_at).toLocaleString('id-ID', {
                         day: '2-digit', month: 'short', year: 'numeric',
                         hour: '2-digit', minute: '2-digit'
-                      })}
+                      }) : '-'}
                     </div>
                   </td>
                   <td className="px-6 py-4">

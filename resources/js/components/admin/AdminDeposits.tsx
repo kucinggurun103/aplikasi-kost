@@ -81,7 +81,7 @@ export default function AdminDeposits({ deposits }: { deposits: any[] }) {
                   <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-indigo-600">{dep.booking_no}</div>
-                    <div className="text-xs text-slate-500">{new Date(dep.created_at).toLocaleDateString()}</div>
+                    <div className="text-xs text-slate-500">{dep.created_at ? new Date(dep.created_at).toLocaleDateString() : '-'}</div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="font-medium text-slate-900">{dep.tenant?.name || 'Unknown'}</div>

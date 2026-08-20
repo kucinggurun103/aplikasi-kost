@@ -123,7 +123,7 @@ export default function AdminInvoices({ invoices }: { invoices: any[] }) {
                   <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-indigo-600">{invoice.payment_no}</div>
-                    <div className="text-xs text-slate-500">{new Date(invoice.created_at).toLocaleDateString()}</div>
+                    <div className="text-xs text-slate-500">{invoice.created_at ? new Date(invoice.created_at).toLocaleDateString() : '-'}</div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="font-medium text-slate-900">{invoice.booking?.tenant?.name || 'Unknown'}</div>

@@ -43,11 +43,11 @@ export const ActiveContract = ({ contract }: { contract: any }) => {
                 </div>
                 <div>
                     <p className="text-sm text-slate-500 mb-1">Tanggal Mulai</p>
-                    <p className="font-semibold text-slate-900">{new Date(contract.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                    <p className="font-semibold text-slate-900">{contract.start_date ? new Date(contract.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</p>
                 </div>
                 <div>
                     <p className="text-sm text-slate-500 mb-1">Tanggal Selesai</p>
-                    <p className="font-semibold text-slate-900">{new Date(contract.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                    <p className="font-semibold text-slate-900">{contract.end_date ? new Date(contract.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</p>
                 </div>
                 <div>
                     <p className="text-sm text-slate-500 mb-1">Status</p>
@@ -130,7 +130,7 @@ export const BookingHistory = ({ bookings }: { bookings: any[] }) => {
                             <div>
                                 <p className="font-bold text-slate-900">{b.room_unit?.unit_number ? `Kamar ${b.room_unit.unit_number} - ` : ''}{b.room_type?.name} di {b.room_type?.branch?.name}</p>
                                 <p className="text-xs text-slate-500 mt-1">
-                                    Check In: {new Date(b.check_in_date).toLocaleDateString('id-ID')} |
+                                    Check In: {b.check_in_date ? new Date(b.check_in_date).toLocaleDateString('id-ID') : '-'} |
                                     ID: BKG-{b.id}
                                 </p>
                             </div>
@@ -242,7 +242,7 @@ export const PendingInvoices = ({ invoices }: { invoices: any[] }) => {
                                 </div>
                                 <p className="text-sm font-semibold text-slate-800">{getInvoiceDescription(inv)}</p>
                                 <p className="text-xs text-slate-600">{inv.booking?.room_type?.branch?.name} - {inv.booking?.room_unit?.unit_number ? `Kamar ${inv.booking.room_unit.unit_number}` : inv.booking?.room_type?.name}</p>
-                                <p className="text-xs text-slate-500 mt-1">Dibuat: {new Date(inv.created_at).toLocaleDateString('id-ID')}</p>
+                                <p className="text-xs text-slate-500 mt-1">Dibuat: {inv.created_at ? new Date(inv.created_at).toLocaleDateString('id-ID') : '-'}</p>
                             </div>
                             <div className="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
                                 <p className={`text-lg font-bold ${inv.status === 'Pending' ? 'text-blue-600' : 'text-amber-600'}`}>{formatRupiah(inv.grand_total)}</p>
@@ -405,7 +405,7 @@ export const PaymentHistory = ({ payments }: { payments: any[] }) => {
                             <div>
                                 <p className="font-bold text-slate-900">INV-{p.id} <span className="text-slate-400 font-normal">({p.payment_method || 'Manual'})</span></p>
                                 <p className="text-xs text-slate-500 mt-1">
-                                    {new Date(p.created_at).toLocaleDateString('id-ID')} | Booking ID: BKG-{p.booking_id}
+                                    {p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : '-'} | Booking ID: BKG-{p.booking_id}
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">

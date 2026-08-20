@@ -37,7 +37,7 @@ export default function AdminContracts({ contracts }: { contracts: any[] }) {
   };
 
   const isExpiringSoon = (endDate: string) => {
-    const end = new Date(endDate);
+    const end = new Date(endDate || Date.now());
     const today = new Date();
     const diffTime = end.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -45,7 +45,7 @@ export default function AdminContracts({ contracts }: { contracts: any[] }) {
   };
 
   const isExpired = (endDate: string) => {
-    const end = new Date(endDate);
+    const end = new Date(endDate || Date.now());
     const today = new Date();
     return end < today;
   };
@@ -98,7 +98,7 @@ export default function AdminContracts({ contracts }: { contracts: any[] }) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="font-medium">
-                        {new Date(contract.start_date).toLocaleDateString()} - {new Date(contract.end_date).toLocaleDateString()}
+                        {contract.start_date ? new Date(contract.start_date).toLocaleDateString() : '-'} - {contract.end_date ? new Date(contract.end_date).toLocaleDateString() : '-'}
                       </div>
                       {expiring && (
                         <div className="text-xs text-orange-600 font-semibold flex items-center gap-1 mt-1">

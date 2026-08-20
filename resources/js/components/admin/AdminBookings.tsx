@@ -42,7 +42,7 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
   // Calculate checkout date based on form state
   const getCheckoutDate = () => {
     if (!bookingData.check_in_date) return '-';
-    const checkIn = new Date(bookingData.check_in_date);
+    const checkIn = new Date(bookingData.check_in_date || Date.now());
     if (bookingData.rent_type === 'Monthly') {
       checkIn.setMonth(checkIn.getMonth() + parseInt(bookingData.duration_month || '1'));
     } else {
@@ -194,7 +194,7 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
                   <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-indigo-600">{booking.booking_no}</div>
-                    <div className="text-xs text-slate-500">{new Date(booking.created_at).toLocaleDateString()}</div>
+                    <div className="text-xs text-slate-500">{booking.created_at ? new Date(booking.created_at).toLocaleDateString() : '-'}</div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="font-medium text-slate-900">{booking.tenant?.name || 'Unknown'}</div>
@@ -212,7 +212,7 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium">{new Date(booking.check_in_date).toLocaleDateString()}</div>
+                    <div className="font-medium">{booking.check_in_date ? new Date(booking.check_in_date).toLocaleDateString() : '-'}</div>
                     <div className="text-xs text-slate-500">
                       {booking.rent_type === 'Daily' 
                         ? `${booking.duration_days} Hari` 
@@ -496,7 +496,7 @@ export default function AdminBookings({ bookings, branches, roomTypes, users }: 
                           <td className="px-4 py-3 font-medium text-slate-900">{inv.payment_no}</td>
                           <td className="px-4 py-3 text-slate-600">
                             <div className="flex items-center gap-2">
-                              <span>{new Date(inv.due_date).toLocaleDateString()}</span>
+                              <span>{inv.due_date ? new Date(inv.due_date).toLocaleDateString() : '-'}</span>
                               {inv.status !== 'Paid' && (
                                 <button 
                                   onClick={() => {
