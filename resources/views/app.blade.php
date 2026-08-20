@@ -6,7 +6,7 @@
         
         <!-- Default SEO & Open Graph Meta Tags -->
         <meta name="description" content="Platform terbaik untuk mencari, memesan, dan mengelola kost. Mudah, aman, dan nyaman.">
-        <meta property="og:title" content="{{ config('app.name', 'Cozqta - Manajemen Kost') }}">
+        <meta property="og:title" content="Cozqta - Manajemen Kost">
         <meta property="og:description" content="Platform terbaik untuk mencari, memesan, dan mengelola kost. Mudah, aman, dan nyaman.">
         <meta property="og:image" content="{{ asset('pavicon.png') }}">
         <meta property="og:url" content="{{ url()->current() }}">
@@ -25,7 +25,7 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Cozqta - Manajemen Kost') }}</title>
+            <title>Cozqta - Manajemen Kost</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
