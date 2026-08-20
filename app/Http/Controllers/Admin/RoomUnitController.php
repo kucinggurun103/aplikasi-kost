@@ -45,8 +45,9 @@ class RoomUnitController extends Controller
             $prefix = trim($unitPrefix);
             $unitName = $prefix !== '' ? $prefix.' '.$unitIdentifier : $unitIdentifier;
 
-            // Check if unit number already exists
-            $exists = RoomUnit::where('room_type_id', $roomType->id)
+            // Check if unit number already exists (including soft-deleted ones)
+            $exists = RoomUnit::withTrashed()
+                ->where('room_type_id', $roomType->id)
                 ->where('unit_number', $unitName)
                 ->exists();
 
@@ -81,7 +82,13 @@ class RoomUnitController extends Controller
     {
         $request->validate([
             'status' => 'required|string',
-            'unit_number' => 'required|string',
+            'unit_number' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('room_units')
+                    ->where('room_type_id', $roomUnit->room_type_id)
+                    ->ignore($roomUnit->id)
+            ],
             'floor' => 'nullable|string',
             'building_name' => 'nullable|string',
             'notes' => 'nullable|string',
