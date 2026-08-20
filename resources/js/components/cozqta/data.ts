@@ -15,6 +15,9 @@ export interface Room {
   floor: number;
   building: string;
   status: string;
+  booking_price?: number;
+  deposit_type?: string;
+  deposit_price?: number;
 }
 
 export interface Testimonial {

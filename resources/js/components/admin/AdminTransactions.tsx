@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreditCard, Download, ArrowUpRight } from 'lucide-react';
+import { CreditCard, Download, ArrowUpRight, Wallet } from 'lucide-react';
 import { Btn, Badge, SearchableSelect } from '@/components/cozqta/primitives';
 import { fmtIDR } from '@/components/cozqta/data';
 

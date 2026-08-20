@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import { FileText, BedDouble, Calendar, Receipt, CreditCard, Star, File as FileIcon, Download, AlertCircle, CheckCircle2, X, Copy, Check, UploadCloud } from 'lucide-react';
 import { Btn } from '@/components/cozqta/primitives';
-import { StatusBadge } from '../admin/AdminBookings'; // Make sure this exists, or use local
+
 
 export const StatusBadgeLocal = ({ status }: { status: string }) => {
     let color = 'bg-slate-100 text-slate-700';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
 import { ChevronDown, Edit, Trash2, Shield, Users } from 'lucide-react';
 import Swal from 'sweetalert2';
 
@@ -308,8 +308,7 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
           return false;
         }
         return new Promise((resolve) => {
-          put(`/admin/master/users/${user.id}/reset-password`, {
-            data: { password },
+          router.put(`/admin/master/users/${user.id}/reset-password`, { password }, {
             preserveScroll: true,
             onSuccess: () => {
               resolve(true);

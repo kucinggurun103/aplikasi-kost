@@ -1,5 +1,5 @@
 import React from 'react';
-import { Send, CheckCircle2, Clock, XCircle, Search } from 'lucide-react';
+import { Send, CheckCircle2, Clock, XCircle, Search, Bell } from 'lucide-react';
 import { Badge } from '@/components/cozqta/primitives';
 
 export default function AdminNotificationLogs({ logs }: { logs: any[] }) {

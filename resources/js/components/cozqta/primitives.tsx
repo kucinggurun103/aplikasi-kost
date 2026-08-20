@@ -12,12 +12,14 @@ import { Room, fmtShort, FAQ_ITEMS } from './data';
 
 export interface BadgeProps {
   children: ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'outline' | 'purple';
+  variant?: 'default' | 'success' | 'warning' | 'danger' | 'outline' | 'purple' | 'primary';
+  className?: string;
 }
 
-export function Badge({ children, variant = 'default' }: BadgeProps) {
+export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
   const variants = {
     default: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+    primary: 'bg-blue-50 text-blue-700 border-blue-100',
     success: 'bg-green-50 text-green-700 border-green-100',
     warning: 'bg-amber-50 text-amber-700 border-amber-100',
     danger: 'bg-red-50 text-red-700 border-red-100',
@@ -25,7 +27,7 @@ export function Badge({ children, variant = 'default' }: BadgeProps) {
     purple: 'bg-violet-50 text-violet-700 border-violet-100',
   };
   return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${variants[variant]}`}>
+    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${variants[variant]} ${className}`}>
       {children}
     </span>
   );
