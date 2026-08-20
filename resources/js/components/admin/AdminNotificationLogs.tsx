@@ -3,6 +3,16 @@ import { Send, CheckCircle2, Clock, XCircle, Search, Bell } from 'lucide-react';
 import { Badge } from '@/components/cozqta/primitives';
 
 export default function AdminNotificationLogs({ logs }: { logs: any[] }) {
+  const safeDate = (dateVal: string | null | undefined) => {
+    if (!dateVal) return { date: '-', time: '-' };
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return { date: '-', time: '-' };
+    return {
+      date: d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }),
+      time: d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+    };
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6 animate-fade-in">
       <div className="flex items-center justify-between bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
@@ -41,10 +51,10 @@ export default function AdminNotificationLogs({ logs }: { logs: any[] }) {
                   <td className="px-6 py-4 whitespace-nowrap text-slate-500">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-semibold text-slate-900">
-                      {new Date(log.created_at || log.sent_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+                      {safeDate(log.created_at || log.sent_at).date}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {new Date(log.created_at || log.sent_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                      {safeDate(log.created_at || log.sent_at).time}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
