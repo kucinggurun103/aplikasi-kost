@@ -6,6 +6,12 @@ import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
 import { defineConfig } from 'vite';
 
+const wayfinderCommand =
+    process.env.WAYFINDER_COMMAND ??
+    (process.platform === 'win32'
+        ? 'php artisan wayfinder:generate'
+        : 'sh -c \'php artisan wayfinder:generate "$@" || test -d resources/js/actions\' --');
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -26,14 +32,18 @@ export default defineConfig({
         tailwindcss(),
         wayfinder({
             formVariants: true,
-            command: 'C:\\laragon\\bin\\php\\php-8.5.4-nts-Win32-vs17-x64\\php.exe artisan wayfinder:generate',
+            command: wayfinderCommand,
         }),
     ],
     build: {
         rolldownOptions: {
             output: {
                 manualChunks(id: string) {
-                    if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-vendor')) {
+                    if (
+                        id.includes('recharts') ||
+                        id.includes('d3-') ||
+                        id.includes('victory-vendor')
+                    ) {
                         return 'vendor-charts';
                     }
                     if (id.includes('sweetalert2')) {
