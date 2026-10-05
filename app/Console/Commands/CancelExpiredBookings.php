@@ -14,7 +14,7 @@ class CancelExpiredBookings extends Command
 
     protected $description = 'Cancels bookings that have not been checked in within 7 days of their check-in date';
 
-    public function handle()
+    public function handle(): int
     {
         $expirationDate = Carbon::now()->subDays(7)->toDateString();
 
@@ -39,5 +39,7 @@ class CancelExpiredBookings extends Command
         }
 
         $this->info("Successfully cancelled {$count} expired bookings.");
+
+        return self::SUCCESS;
     }
 }

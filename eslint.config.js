@@ -144,4 +144,17 @@ export default [
             'react-hooks/set-state-in-effect': 'warn',
         },
     },
+    {
+        files: ['**/*.cjs'],
+        languageOptions: {
+            globals: {
+                ...globals.node,
+            },
+        },
+        rules: {
+            '@typescript-eslint/no-require-imports': 'off',
+            '@typescript-eslint/no-unused-vars': 'off',
+            '@stylistic/padding-line-between-statements': 'off',
+        },
+    },
 ];
