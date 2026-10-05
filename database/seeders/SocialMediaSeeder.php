@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\SocialMedia;
 use Illuminate\Database\Seeder;
 
 class SocialMediaSeeder extends Seeder

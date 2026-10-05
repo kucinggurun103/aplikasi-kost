@@ -1,13 +1,13 @@
 <?php
 
-use App\Models\User;
-use App\Models\Branch;
-use App\Models\RoomType;
 use App\Models\BookingHeader;
+use App\Models\Branch;
 use App\Models\PaymentHeader;
+use App\Models\RoomType;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
@@ -61,19 +61,19 @@ it('can create a manual booking with payment proof directly', function () {
     $response->assertSuccessful();
 
     $booking = BookingHeader::where('tenant_id', $this->tenant->id)->first();
-    
+
     // Booking status should change immediately due to DP paid
     expect($booking->status)->toBe('Confirmed');
     expect($booking->payment_status)->toBe('Partially Paid');
 
     // Should generate invoices for all 3 months + DP
     $invoices = PaymentHeader::where('booking_header_id', $booking->id)->get();
-    expect($invoices)->toHaveCount(4); 
-    
+    expect($invoices)->toHaveCount(4);
+
     $firstInvoice = $invoices->first();
     expect($firstInvoice->status)->toBe('Paid');
     expect($firstInvoice->proof_of_payment)->not->toBeNull();
-    
+
     Storage::disk('public')->assertExists($firstInvoice->proof_of_payment);
 });
 
@@ -88,7 +88,7 @@ it('can manually pay an existing invoice', function () {
         'status' => 'Pending',
         'payment_status' => 'Pending',
     ]);
-    
+
     // Create an invoice
     $invoice = PaymentHeader::factory()->create([
         'booking_header_id' => $booking->id,
@@ -110,7 +110,7 @@ it('can manually pay an existing invoice', function () {
     expect($invoice->status)->toBe('Paid');
     expect($invoice->proof_of_payment)->not->toBeNull();
     Storage::disk('public')->assertExists($invoice->proof_of_payment);
-    
+
     $booking->refresh();
     expect($booking->status)->toBe('Checked In');
 });

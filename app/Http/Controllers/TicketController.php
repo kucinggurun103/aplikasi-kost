@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
+use App\Models\TenantContract;
 use App\Models\Ticket;
 use App\Models\TicketReply;
-use App\Models\TenantContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -17,14 +18,15 @@ class TicketController extends Controller
 
         if ($user->hasRole('tenant') || $user->role === 'tenant') {
             $query->where('user_id', $user->id);
-        } elseif (!$user->hasRole('admin') && $user->role !== 'admin') {
-            $branchIds = \App\Models\Branch::whereHas('users', function ($q) use ($user) {
+        } elseif (! $user->hasRole('admin') && $user->role !== 'admin') {
+            $branchIds = Branch::whereHas('users', function ($q) use ($user) {
                 $q->where('users.id', $user->id);
             })->pluck('id');
             $query->whereIn('branch_id', $branchIds);
         }
 
         $tickets = $query->orderBy('created_at', 'desc')->get();
+
         return response()->json($tickets);
     }
 
@@ -39,7 +41,7 @@ class TicketController extends Controller
         ]);
 
         $user = $request->user();
-        
+
         // Cari branch_id dari kontrak aktif tenant
         $activeContract = TenantContract::where('user_id', $user->id)
             ->where('status', 'Active')
@@ -48,7 +50,7 @@ class TicketController extends Controller
 
         $branchId = $activeContract ? $activeContract->bookingHeader->roomType->branch_id : null;
 
-        if (!$branchId) {
+        if (! $branchId) {
             return response()->json(['message' => 'Anda belum memiliki sewa aktif.'], 403);
         }
 
@@ -58,7 +60,7 @@ class TicketController extends Controller
         }
 
         $ticket = Ticket::create([
-            'ticket_no' => 'TKT-' . strtoupper(Str::random(8)),
+            'ticket_no' => 'TKT-'.strtoupper(Str::random(8)),
             'user_id' => $user->id,
             'branch_id' => $branchId,
             'category' => $request->category,
@@ -75,6 +77,7 @@ class TicketController extends Controller
     public function show(Ticket $ticket)
     {
         $ticket->load(['user', 'branch', 'replies.user']);
+
         return response()->json($ticket);
     }
 

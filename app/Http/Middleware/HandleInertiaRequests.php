@@ -63,6 +63,7 @@ class HandleInertiaRequests extends Middleware
             ->get(['id', 'name', 'code'])
             ->map(function ($b) {
                 $b->slug = Str::slug($b->name);
+
                 return $b;
             })
             ->values();

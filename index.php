@@ -4,7 +4,6 @@
  * Laravel - A PHP Framework For Web Artisans
  * Root Fallback Controller for Shared Hosting Deployments
  */
-
 $uri = urldecode(
     parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? ''
 );

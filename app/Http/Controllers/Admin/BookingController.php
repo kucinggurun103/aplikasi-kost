@@ -197,7 +197,7 @@ class BookingController extends Controller
         // Generate Invoices Upfront
         $bookingFee = $roomType->booking_price ?? 0;
         $paymentCount = 0;
-        
+
         if ($bookingFee > 0) {
             $paymentCount++;
             PaymentHeader::create([
@@ -215,21 +215,21 @@ class BookingController extends Controller
             for ($i = 1; $i <= $durationMonth; $i++) {
                 $paymentCount++;
                 $monthRent = $monthlyPrice + $addonMonthlyTotal;
-                
+
                 $isFirstMonth = ($i === 1);
                 $monthSubtotal = $monthRent;
-                
+
                 if ($isFirstMonth) {
                     $monthSubtotal += $deposit;
                 }
-                
+
                 $dueDate = $isFirstMonth ? $checkIn : $checkIn->copy()->addMonths($i - 1);
                 $invoiceDate = $isFirstMonth ? now() : $dueDate->copy()->subDays(7);
-                
+
                 if ($isFirstMonth && $bookingFee == 0) {
                     $dueDate = now()->addDays(1);
                 }
-                
+
                 PaymentHeader::create([
                     'payment_no' => 'PAY-'.time().'-'.$booking->id.'-'.$paymentCount,
                     'booking_header_id' => $booking->id,
@@ -247,7 +247,7 @@ class BookingController extends Controller
         if ($request->hasFile('payment_proof')) {
             $path = $request->file('payment_proof')->store('payments', 'public');
             $firstPayment = PaymentHeader::where('booking_header_id', $booking->id)->orderBy('id')->first();
-            
+
             if ($firstPayment) {
                 $firstPayment->update([
                     'proof_of_payment' => $path,
@@ -258,7 +258,7 @@ class BookingController extends Controller
                 if ($bookingFee > 0 && $firstPayment->subtotal == $bookingFee) {
                     $booking->update([
                         'payment_status' => 'Partially Paid',
-                        'status' => 'Confirmed', 
+                        'status' => 'Confirmed',
                     ]);
                     PaymentHeader::generateMonthlyInvoices($booking);
                 } else {
@@ -266,11 +266,11 @@ class BookingController extends Controller
                         'payment_status' => ($firstPayment->grand_total >= $booking->grand_total) ? 'Paid' : 'Partially Paid',
                         'status' => 'Checked In',
                     ]);
-                    
+
                     if ($booking->room_unit_id) {
                         RoomUnit::where('id', $booking->room_unit_id)->update(['status' => 'Occupied']);
                     }
-                    
+
                     TenantContract::create([
                         'contract_number' => 'CTR-'.time().'-'.rand(100, 999),
                         'booking_header_id' => $booking->id,
@@ -300,8 +300,8 @@ class BookingController extends Controller
         ]);
 
         $payment = PaymentHeader::where('booking_header_id', $booking->id)
-                                ->where('id', $request->payment_id)
-                                ->first();
+            ->where('id', $request->payment_id)
+            ->first();
 
         if (! $payment) {
             return back()->with('error', 'Data tagihan tidak ditemukan.');
@@ -329,7 +329,7 @@ class BookingController extends Controller
         if ($isDPPayment) {
             $booking->update([
                 'payment_status' => 'Partially Paid',
-                'status' => 'Confirmed', 
+                'status' => 'Confirmed',
             ]);
 
             // Generate monthly invoices after DP is paid
@@ -338,19 +338,19 @@ class BookingController extends Controller
                 PaymentHeader::generateMonthlyInvoices($booking);
             }
         } else {
-            $isFirstRentPayment = !\App\Models\TenantContract::where('booking_header_id', $booking->id)->exists();
+            $isFirstRentPayment = ! TenantContract::where('booking_header_id', $booking->id)->exists();
 
             $booking->update([
                 'payment_status' => ($totalPaid >= $booking->grand_total) ? 'Paid' : 'Partially Paid',
                 'status' => 'Checked In',
             ]);
-            
+
             if ($booking->room_unit_id) {
-                \App\Models\RoomUnit::where('id', $booking->room_unit_id)->update(['status' => 'Occupied']);
+                RoomUnit::where('id', $booking->room_unit_id)->update(['status' => 'Occupied']);
             }
 
             if ($isFirstRentPayment) {
-                \App\Models\TenantContract::create([
+                TenantContract::create([
                     'contract_number' => 'CTR-'.time().'-'.rand(100, 999),
                     'booking_header_id' => $booking->id,
                     'user_id' => $booking->tenant_id,

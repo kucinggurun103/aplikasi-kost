@@ -96,19 +96,19 @@ class RoomTypeController extends Controller
         $unitFormat = $request->input('unit_format', 'numeric');
         $floorNumber = $request->input('floor') ?: '1';
         $floor = 'Lantai '.$floorNumber;
-        
+
         if ($amountOfRooms > 0) {
             for ($i = 0; $i < $amountOfRooms; $i++) {
                 $currentIndex = $startNumber + $i;
-                
+
                 $unitIdentifier = (string) $currentIndex;
                 if ($unitFormat === 'alphabet') {
                     $result = '';
                     $num = $currentIndex;
                     while ($num > 0) {
                         $rem = ($num - 1) % 26;
-                        $result = chr(65 + $rem) . $result;
-                        $num = (int)(($num - $rem) / 26);
+                        $result = chr(65 + $rem).$result;
+                        $num = (int) (($num - $rem) / 26);
                     }
                     $unitIdentifier = $result;
                 }
