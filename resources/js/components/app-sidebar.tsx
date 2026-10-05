@@ -1,5 +1,12 @@
 import { Link } from '@inertiajs/react';
-import { Building2, Calendar, HelpCircle, Home, LayoutGrid, Shield } from 'lucide-react';
+import {
+    Building2,
+    Calendar,
+    HelpCircle,
+    Home,
+    LayoutGrid,
+    Shield,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';

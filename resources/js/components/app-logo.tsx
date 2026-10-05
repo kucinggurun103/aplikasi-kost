@@ -10,7 +10,9 @@ export default function AppLogo() {
                 <span className="mb-0.5 truncate leading-tight font-bold text-slate-900 dark:text-white">
                     CozQta
                 </span>
-                <span className="truncate text-xs text-indigo-600 font-medium">Solusi Kost Modern</span>
+                <span className="truncate text-xs font-medium text-indigo-600">
+                    Solusi Kost Modern
+                </span>
             </div>
         </>
     );
