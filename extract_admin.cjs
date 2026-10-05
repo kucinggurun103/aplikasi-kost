@@ -2,10 +2,6 @@ const fs = require('fs');
 
 const code = fs.readFileSync('resources/js/pages/dashboard.tsx', 'utf8');
 
-// Extract all inline admin component functions
-const fnNames = ['AdminRooms', 'AdminTenants', 'AdminPayments', 'AdminProperties', 
-  'AdminWebSettings', 'AdminDiscountRules', 'AdminSocialLinks', 'AdminFaqs'];
-
 // We'll extract the entire tail of the file from AdminRooms onwards to a separate file
 // Find start of AdminRooms
 const adminRoomsStart = code.indexOf('\n\nfunction AdminRooms(');

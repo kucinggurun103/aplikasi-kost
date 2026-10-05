@@ -14,7 +14,7 @@ class AutoTerminateOverdueLeases extends Command
 
     protected $description = 'Automatically terminates leases that have passed their check-out date by 14 days without renewal';
 
-    public function handle()
+    public function handle(): int
     {
         $expirationDate = Carbon::now()->subDays(14)->toDateString();
 
@@ -46,5 +46,7 @@ class AutoTerminateOverdueLeases extends Command
         }
 
         $this->info("Successfully terminated {$count} overdue leases.");
+
+        return self::SUCCESS;
     }
 }

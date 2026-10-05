@@ -12,13 +12,15 @@ use App\Models\RoomUnit;
 use App\Models\TenantContract;
 use App\Services\NotificationService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class BookingController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $status = $request->query('status');
 
@@ -35,13 +37,13 @@ class BookingController extends Controller
         ]);
     }
 
-    public function assignUnit(Request $request, BookingHeader $booking)
+    public function assignUnit(Request $request, BookingHeader $booking): RedirectResponse
     {
         $request->validate([
             'room_unit_id' => 'required|exists:room_units,id',
         ]);
 
-        $unit = RoomUnit::findOrFail($request->room_unit_id);
+        $unit = RoomUnit::query()->findOrFail((int) $request->input('room_unit_id'));
 
         // Make sure unit belongs to the same room type
         if ($unit->room_type_id !== $booking->room_type_id) {
