@@ -12,12 +12,14 @@ class NotificationController extends Controller
         if ($notification) {
             $notification->markAsRead();
         }
+
         return back();
     }
 
     public function markAllAsRead(Request $request)
     {
         $request->user()->unreadNotifications->markAsRead();
+
         return back();
     }
 }

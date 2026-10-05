@@ -3,8 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewBookingNotification extends Notification
@@ -40,8 +38,8 @@ class NewBookingNotification extends Notification
     {
         return [
             'booking_id' => $this->booking->id ?? null,
-            'message' => 'Pesanan baru ' . ($this->booking->booking_no ?? '') . ' masuk.',
-            'type' => 'new_booking'
+            'message' => 'Pesanan baru '.($this->booking->booking_no ?? '').' masuk.',
+            'type' => 'new_booking',
         ];
     }
 }

@@ -49,7 +49,7 @@ class TenantContractController extends Controller
         DB::transaction(function () use ($contract, $request, &$alreadyTerminated): void {
             $contract = TenantContract::whereKey($contract->id)->lockForUpdate()->firstOrFail();
             if ($contract->status === 'Terminated') {
-            $alreadyTerminated = true;
+                $alreadyTerminated = true;
 
                 return;
             }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\RoomType;
 use App\Models\RoomUnit;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RoomUnitController extends Controller
 {
@@ -29,15 +30,15 @@ class RoomUnitController extends Controller
             $currentIndex = $startNumber + $i;
             $count = $roomType->units()->withTrashed()->count() + $i; // for internal unique code
             $unitCode = $roomType->type_code.'-U'.str_pad($count + 1, 2, '0', STR_PAD_LEFT);
-            
+
             $unitIdentifier = (string) $currentIndex;
             if ($unitFormat === 'alphabet') {
                 $result = '';
                 $num = $currentIndex;
                 while ($num > 0) {
                     $rem = ($num - 1) % 26;
-                    $result = chr(65 + $rem) . $result;
-                    $num = (int)(($num - $rem) / 26);
+                    $result = chr(65 + $rem).$result;
+                    $num = (int) (($num - $rem) / 26);
                 }
                 $unitIdentifier = $result;
             }
@@ -69,7 +70,7 @@ class RoomUnitController extends Controller
 
         if (count($existingUnits) > 0) {
             return redirect()->back()->withErrors([
-                'unit_prefix' => 'Unit dengan nomor/nama berikut sudah ada: ' . implode(', ', $existingUnits) . '. Silakan ubah Awalan atau Nomor Mulai.'
+                'unit_prefix' => 'Unit dengan nomor/nama berikut sudah ada: '.implode(', ', $existingUnits).'. Silakan ubah Awalan atau Nomor Mulai.',
             ]);
         }
 
@@ -85,9 +86,9 @@ class RoomUnitController extends Controller
             'unit_number' => [
                 'required',
                 'string',
-                \Illuminate\Validation\Rule::unique('room_units')
+                Rule::unique('room_units')
                     ->where('room_type_id', $roomUnit->room_type_id)
-                    ->ignore($roomUnit->id)
+                    ->ignore($roomUnit->id),
             ],
             'floor' => 'nullable|string',
             'building_name' => 'nullable|string',

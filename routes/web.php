@@ -15,24 +15,31 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TenantContractController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PaymentHistoryController;
 use App\Http\Controllers\TenantReviewController;
+use App\Http\Controllers\TicketController;
 use App\Http\Middleware\EnsureProfileIsComplete;
 use App\Models\BookingAddon;
 use App\Models\BookingHeader;
+use App\Models\DiscountRule;
 use App\Models\Facility;
 use App\Models\Faq;
 use App\Models\PaymentGateway;
 use App\Models\PaymentHeader;
+use App\Models\Review;
 use App\Models\RoomUnit;
 use App\Models\SocialMedia;
 use App\Models\TenantContract;
+use App\Models\User;
+use App\Models\WebSetting;
+use App\Notifications\NewBookingNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-if (!function_exists('mapRoomUnit')) {
+if (! function_exists('mapRoomUnit')) {
     function mapRoomUnit($unit)
     {
         $room = $unit->roomType;
@@ -98,7 +105,7 @@ Route::get('/', function () {
     return inertia('welcome', [
         'faqs' => Faq::where('is_active', true)->orderBy('sort_order')->get(),
         'social_media' => SocialMedia::where('is_active', true)->orderBy('sort_order')->get(),
-        'testimonials' => \App\Models\Review::with('branch')->where('is_published', true)->orderBy('created_at', 'desc')->take(10)->get(),
+        'testimonials' => Review::with('branch')->where('is_published', true)->orderBy('created_at', 'desc')->take(10)->get(),
         'rooms' => $units,
     ]);
 })->name('home');
@@ -180,7 +187,7 @@ Route::get('/bookings/room/{room_id}', function (Request $request, $room_id) {
         $addons = Facility::where('price', '>', 0)->whereNull('branch_id')->get();
     }
 
-return inertia('bookings/create', [
+    return inertia('bookings/create', [
         'room' => $room,
         'addons' => $addons,
     ]);
@@ -274,7 +281,7 @@ Route::post('/payments/simulate-gateway', function (Request $request) {
     if ($isDPPayment) {
         $booking->update([
             'payment_status' => 'Partially Paid',
-            'status' => 'Confirmed', 
+            'status' => 'Confirmed',
         ]);
 
         $existingCount = PaymentHeader::where('booking_header_id', $booking->id)->count();
@@ -282,19 +289,19 @@ Route::post('/payments/simulate-gateway', function (Request $request) {
             PaymentHeader::generateMonthlyInvoices($booking);
         }
     } else {
-        $isFirstRentPayment = !\App\Models\TenantContract::where('booking_header_id', $booking->id)->exists();
+        $isFirstRentPayment = ! TenantContract::where('booking_header_id', $booking->id)->exists();
 
         $booking->update([
             'payment_status' => ($totalPaid >= $booking->grand_total) ? 'Paid' : 'Partially Paid',
             'status' => 'Checked In',
         ]);
-        
+
         if ($booking->room_unit_id) {
-            \App\Models\RoomUnit::where('id', $booking->room_unit_id)->update(['status' => 'Occupied']);
+            RoomUnit::where('id', $booking->room_unit_id)->update(['status' => 'Occupied']);
         }
 
         if ($isFirstRentPayment) {
-            \App\Models\TenantContract::create([
+            TenantContract::create([
                 'contract_number' => 'CTR-'.time().'-'.rand(100, 999),
                 'booking_header_id' => $booking->id,
                 'user_id' => $booking->tenant_id,
@@ -338,12 +345,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $addonTotal = array_sum($addonPrices) * $request->duration;
         }
 
-        $adminFee = \App\Models\WebSetting::first()->admin_fee ?? 25000;
+        $adminFee = WebSetting::first()->admin_fee ?? 25000;
         $bookingFee = $unit->roomType->booking_price ?? 0;
         $depositFee = $unit->roomType->deposit_price ?? 0;
         $depositType = $unit->roomType->deposit_type ?? 'Upfront';
 
-        $discountRule = \App\Models\DiscountRule::where('minimum_months', $request->duration)->first();
+        $discountRule = DiscountRule::where('minimum_months', $request->duration)->first();
         $discountRate = $discountRule ? ($discountRule->discount_percentage / 100) : 0;
         $discountAmount = $subtotal * $discountRate;
 
@@ -381,18 +388,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
 
         // Notify Admins and Branch Operators
-        $adminsAndOperators = \App\Models\User::with('branches')->whereHas('roles', function ($q) {
+        $adminsAndOperators = User::with('branches')->whereHas('roles', function ($q) {
             $q->whereIn('code', ['admin', 'operator']);
         })->get()->filter(function ($user) use ($booking) {
-            if ($user->hasRole('admin')) return true;
+            if ($user->hasRole('admin')) {
+                return true;
+            }
             if ($user->hasRole('operator')) {
                 return $user->branches->contains('id', $booking->branch_id);
             }
+
             return false;
         });
 
         foreach ($adminsAndOperators as $userToNotify) {
-            $userToNotify->notify(new \App\Notifications\NewBookingNotification($booking));
+            $userToNotify->notify(new NewBookingNotification($booking));
         }
 
         $addonTotalPerMonth = 0;
@@ -402,10 +412,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
 
         $upfrontDeposit = ($depositType === 'Upfront') ? $depositFee : 0;
-        
+
         $paymentCount = 0;
         $initialPayment = 0;
-        
+
         // 1. Invoice DP (Jika ada Booking Fee)
         if ($bookingFee > 0) {
             $paymentCount++;
@@ -426,25 +436,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
             for ($i = 1; $i <= $request->duration; $i++) {
                 $paymentCount++;
                 $monthRent = $monthlyPrice + $addonTotalPerMonth;
-                
+
                 $isFirstMonth = ($i === 1);
                 $monthSubtotal = $monthRent;
                 $monthAdmin = 0;
-                
+
                 if ($isFirstMonth) {
                     $monthSubtotal += $insuranceFee + $upfrontDeposit;
                     $monthSubtotal -= $discountAmount;
                     $monthAdmin = $adminFee;
                     $initialPayment = $monthSubtotal + $monthAdmin;
                 }
-                
+
                 $dueDate = $isFirstMonth ? Carbon::parse($request->checkInDate) : Carbon::parse($request->checkInDate)->addMonths($i - 1);
                 $invoiceDate = $isFirstMonth ? now() : $dueDate->copy()->subDays(7);
-                
+
                 if ($isFirstMonth) {
                     $dueDate = now()->addDays(1);
                 }
-                
+
                 PaymentHeader::create([
                     'payment_no' => 'PAY-'.time().'-'.$booking->id.'-'.$paymentCount,
                     'booking_header_id' => $booking->id,
@@ -471,8 +481,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('onboarding', [OnboardingController::class, 'store'])->name('onboarding.store');
 
     // Notifications
-    Route::post('/notifications/{id}/mark-as-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::post('/notifications/mark-all-as-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 
     // Dashboard Route (Protected by EnsureProfileIsComplete)
     Route::middleware([EnsureProfileIsComplete::class])->group(function () {
@@ -582,11 +592,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
         // Tickets Routes
         Route::prefix('tickets')->group(function () {
-            Route::get('/', [\App\Http\Controllers\TicketController::class, 'index']);
-            Route::post('/', [\App\Http\Controllers\TicketController::class, 'store']);
-            Route::get('/{ticket}', [\App\Http\Controllers\TicketController::class, 'show']);
-            Route::post('/{ticket}/reply', [\App\Http\Controllers\TicketController::class, 'reply']);
-            Route::put('/{ticket}/status', [\App\Http\Controllers\TicketController::class, 'updateStatus']);
+            Route::get('/', [TicketController::class, 'index']);
+            Route::post('/', [TicketController::class, 'store']);
+            Route::get('/{ticket}', [TicketController::class, 'show']);
+            Route::post('/{ticket}/reply', [TicketController::class, 'reply']);
+            Route::put('/{ticket}/status', [TicketController::class, 'updateStatus']);
         });
 
     });
