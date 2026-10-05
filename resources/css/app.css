@@ -9,43 +9,43 @@
 
 :root {
     --font-size: 16px;
-    --background: #F8FAFC;
-    --foreground: #1E293B;
+    --background: #f8fafc;
+    --foreground: #1e293b;
     --card: #ffffff;
-    --card-foreground: #1E293B;
+    --card-foreground: #1e293b;
     --popover: #ffffff;
-    --popover-foreground: #1E293B;
-    --primary: #4F46E5;
+    --popover-foreground: #1e293b;
+    --primary: #4f46e5;
     --primary-foreground: #ffffff;
-    --secondary: #EEF2FF;
-    --secondary-foreground: #4F46E5;
-    --muted: #F1F5F9;
-    --muted-foreground: #64748B;
-    --accent: #EEF2FF;
-    --accent-foreground: #4F46E5;
-    --destructive: #EF4444;
+    --secondary: #eef2ff;
+    --secondary-foreground: #4f46e5;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #eef2ff;
+    --accent-foreground: #4f46e5;
+    --destructive: #ef4444;
     --destructive-foreground: #ffffff;
-    --border: #E2E8F0;
+    --border: #e2e8f0;
     --input: transparent;
-    --input-background: #F8FAFC;
-    --switch-background: #CBD5E1;
+    --input-background: #f8fafc;
+    --switch-background: #cbd5e1;
     --font-weight-medium: 500;
     --font-weight-normal: 400;
-    --ring: #4F46E5;
-    --chart-1: #4F46E5;
-    --chart-2: #22C55E;
-    --chart-3: #F59E0B;
-    --chart-4: #EF4444;
-    --chart-5: #8B5CF6;
+    --ring: #4f46e5;
+    --chart-1: #4f46e5;
+    --chart-2: #22c55e;
+    --chart-3: #f59e0b;
+    --chart-4: #ef4444;
+    --chart-5: #8b5cf6;
     --radius: 0.75rem;
     --sidebar: #ffffff;
-    --sidebar-foreground: #1E293B;
-    --sidebar-primary: #4F46E5;
+    --sidebar-foreground: #1e293b;
+    --sidebar-primary: #4f46e5;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #EEF2FF;
-    --sidebar-accent-foreground: #4F46E5;
-    --sidebar-border: #E2E8F0;
-    --sidebar-ring: #4F46E5;
+    --sidebar-accent: #eef2ff;
+    --sidebar-accent-foreground: #4f46e5;
+    --sidebar-border: #e2e8f0;
+    --sidebar-ring: #4f46e5;
 }
 
 @theme inline {
@@ -107,7 +107,12 @@
         font-size: var(--font-size);
     }
 
-    h1, h2, h3, h4, label, button {
+    h1,
+    h2,
+    h3,
+    h4,
+    label,
+    button {
         font-weight: var(--font-weight-medium);
     }
 

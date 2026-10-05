@@ -126,4 +126,22 @@ export default [
             '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
         },
     },
+    {
+        files: ['**/*.{cjs,ts,tsx}'],
+        rules: {
+            '@stylistic/brace-style': 'warn',
+            '@stylistic/padding-line-between-statements': 'warn',
+            '@typescript-eslint/consistent-type-imports': 'warn',
+            '@typescript-eslint/no-require-imports': 'warn',
+            '@typescript-eslint/no-unused-vars': 'warn',
+            'curly': 'warn',
+            'import/consistent-type-specifier-style': 'warn',
+            'import/order': 'warn',
+            'no-empty': 'warn',
+            'no-undef': 'warn',
+            'no-unsafe-optional-chaining': 'warn',
+            'react-hooks/purity': 'warn',
+            'react-hooks/set-state-in-effect': 'warn',
+        },
+    },
 ];
