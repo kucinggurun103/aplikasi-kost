@@ -102,3 +102,54 @@ test('correct password must be provided to update password', function () {
         ->assertSessionHasErrors('current_password')
         ->assertRedirect(route('security.edit'));
 });
+
+test('password confirmation must match', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->from(route('security.edit'))
+        ->put(route('user-password.update'), [
+            'current_password' => 'password',
+            'password' => 'new-password',
+            'password_confirmation' => 'different-password',
+        ])
+        ->assertSessionHasErrors('password')
+        ->assertRedirect(route('security.edit'));
+
+    expect(Hash::check('password', $user->refresh()->password))->toBeTrue();
+});
+
+test('weak passwords are rejected', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->from(route('security.edit'))
+        ->put(route('user-password.update'), [
+            'current_password' => 'password',
+            'password' => 'short',
+            'password_confirmation' => 'short',
+        ])
+        ->assertSessionHasErrors('password')
+        ->assertRedirect(route('security.edit'));
+});
+
+test('the new password can be used to log in after an update', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->put(route('user-password.update'), [
+            'current_password' => 'password',
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])
+        ->assertSessionHasNoErrors();
+
+    auth()->logout();
+
+    $this->post(route('login'), [
+        'email' => $user->email,
+        'password' => 'new-password',
+    ])->assertRedirect(route('dashboard'));
+
+    $this->assertAuthenticatedAs($user);
+});

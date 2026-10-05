@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useForm, router } from '@inertiajs/react';
 import { Plus, Star, MessageCircle, MapPin, Trash2, Edit2, XCircle } from 'lucide-react';
+import { useForm, router } from '@inertiajs/react';
+import React, { useState } from 'react';
+import ReviewController from '@/actions/App/Http/Controllers/Admin/ReviewController';
 import { Btn, Badge, SearchableSelect } from '@/components/cozqta/primitives';
 
 export default function AdminReviews({ reviews, branches }: { reviews: any[], branches: any[] }) {
@@ -43,12 +44,12 @@ export default function AdminReviews({ reviews, branches }: { reviews: any[], br
   const submitForm = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingId) {
-      put(`/admin/settings/reviews/${editingId}`, {
+      put(ReviewController.update.url(editingId), {
         preserveScroll: true,
         onSuccess: () => closeModal(),
       });
     } else {
-      post(`/admin/settings/reviews`, {
+      post(ReviewController.store.url(), {
         preserveScroll: true,
         onSuccess: () => closeModal(),
       });
@@ -57,7 +58,7 @@ export default function AdminReviews({ reviews, branches }: { reviews: any[], br
 
   const deleteReview = (id: number) => {
     if (confirm("Hapus ulasan ini?")) {
-      router.delete(`/admin/settings/reviews/${id}`, { preserveScroll: true });
+      router.delete(ReviewController.destroy.url(id), { preserveScroll: true });
     }
   };
 

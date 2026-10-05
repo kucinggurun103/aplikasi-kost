@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useForm, router } from '@inertiajs/react';
 import { ChevronDown, Edit, Trash2, Shield, Users } from 'lucide-react';
+import { useForm, router } from '@inertiajs/react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 
 const Btn = ({ children, variant = 'primary', size = 'md', className = '', ...props }: any) => {
@@ -321,14 +321,6 @@ function UserManager({ type, users = [], roles = [] }: { type: 'staff'|'tenants'
         });
       },
       allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Berhasil',
-          text: 'Password berhasil direset!'
-        });
-      }
     });
   };
 

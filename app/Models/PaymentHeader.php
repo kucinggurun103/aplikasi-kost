@@ -8,6 +8,16 @@ class PaymentHeader extends Model
 {
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return [
+            'invoice_date' => 'date',
+            'due_date' => 'date',
+            'paid_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
+    }
+
     public function booking()
     {
         return $this->belongsTo(BookingHeader::class, 'booking_header_id');
