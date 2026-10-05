@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { useForm, usePage } from '@inertiajs/react';
 import { FileText, BedDouble, Calendar, Receipt, CreditCard, Star, File as FileIcon, Download, AlertCircle, CheckCircle2, X, Copy, Check, UploadCloud } from 'lucide-react';
+import { useForm, usePage } from '@inertiajs/react';
+import React, { useState } from 'react';
+import InvoiceController from '@/actions/App/Http/Controllers/InvoiceController';
+import PaymentHistoryController from '@/actions/App/Http/Controllers/PaymentHistoryController';
 import { Btn } from '@/components/cozqta/primitives';
 
 
@@ -395,7 +397,13 @@ export const PendingInvoices = ({ invoices }: { invoices: any[] }) => {
 export const PaymentHistory = ({ payments }: { payments: any[] }) => {
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-6">
-            <h3 className="font-semibold text-slate-900 text-lg">Riwayat Bayar & Invoice</h3>
+            <div className="flex items-center justify-between gap-4">
+                <h3 className="font-semibold text-slate-900 text-lg">Riwayat Bayar & Invoice</h3>
+                <a href={PaymentHistoryController.download.url()} className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700" title="Unduh riwayat pembayaran">
+                    <Download size={16} />
+                    <span>Unduh Riwayat</span>
+                </a>
+            </div>
             {payments.length === 0 ? (
                 <p className="text-slate-500 text-center py-8">Belum ada riwayat pembayaran.</p>
             ) : (
@@ -414,7 +422,7 @@ export const PaymentHistory = ({ payments }: { payments: any[] }) => {
                                     <p className="text-sm font-semibold text-slate-900 mt-1">{formatRupiah(p.grand_total)}</p>
                                 </div>
                                 {p.status === 'Paid' && (
-                                    <a href={`/invoices/${p.id}/download`} target="_blank" rel="noreferrer" className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Download Invoice">
+                                    <a href={InvoiceController.download.url(p.id)} target="_blank" rel="noreferrer" className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Download Invoice">
                                         <Download size={20} />
                                     </a>
                                 )}

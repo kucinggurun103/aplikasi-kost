@@ -11,6 +11,8 @@ import {
   ROOMS, TRANSACTIONS, REVENUE_DATA, OCCUPANCY_DATA, BOOKING_DATA, TENANTS,
   fmtShort, fmtIDR, fmtRevenue, fmt
 } from '@/components/cozqta/data';
+import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
+import TenantReviewController from '@/actions/App/Http/Controllers/TenantReviewController';
 import { StatCard, StatusBadge, Badge, Btn, Avatar, SearchableSelect } from '@/components/cozqta/primitives';
 
 // Dynamic (lazy) imports — loaded only when needed
@@ -114,6 +116,15 @@ export default function Dashboard() {
     }
   }, [props]);
 
+  useEffect(() => router.on('httpException', (event) => {
+    const status = (event as CustomEvent).detail?.response?.status;
+    void showAlert({
+      icon: 'error',
+      title: status === 403 ? 'Akses ditolak' : 'Permintaan gagal',
+      text: status === 403 ? 'Anda tidak memiliki izin untuk melakukan tindakan ini.' : 'Tindakan gagal diproses. Silakan coba lagi.',
+    });
+  }), []);
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans antialiased">
       <Head title={mode === 'admin' ? 'Admin Dashboard — CozQta' : mode === 'operator' ? 'Operator Dashboard — CozQta' : 'User Dashboard — CozQta'} />
@@ -146,8 +157,25 @@ function UserDashboardView({ user, stats }: { user: any; stats: any }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showNotifPopup, setShowNotifPopup] = useState(false);
-  const [reviewRating, setReviewRating] = useState(0);
   const [reviewHoverRating, setReviewHoverRating] = useState(0);
+  const [editingReviewId, setEditingReviewId] = useState<number | null>(null);
+  const {
+    data: passwordData,
+    setData: setPasswordData,
+    put: updatePassword,
+    processing: passwordProcessing,
+    errors: passwordErrors,
+    reset: resetPasswordForm,
+  } = useForm({ current_password: '', password: '', password_confirmation: '' });
+  const {
+    data: reviewData,
+    setData: setReviewData,
+    post: postReview,
+    put: putReview,
+    processing: reviewProcessing,
+    errors: reviewErrors,
+    reset: resetReviewForm,
+  } = useForm({ branch_id: String(stats.rental_history?.[0]?.branch_id || ''), rating: 5, review_text: '' });
 
   const handleTabChange = (newTab: string) => {
     setTab(newTab);
@@ -569,21 +597,30 @@ function UserDashboardView({ user, stats }: { user: any; stats: any }) {
           {tab === "password" && (
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4 animate-fade-in max-w-2xl mx-auto">
               <h3 className="font-semibold text-slate-900 text-lg mb-4">Ubah Kata Sandi</h3>
-              <form className="space-y-4 w-full" onSubmit={(e) => { e.preventDefault(); showAlert({ icon: 'success', title: 'Berhasil', text: 'Kata sandi berhasil diubah!' }); }}>
+              <form className="space-y-4 w-full" onSubmit={(e) => {
+                e.preventDefault();
+                updatePassword(SecurityController.update.url(), {
+                  preserveScroll: true,
+                  onSuccess: () => resetPasswordForm(),
+                });
+              }}>
                 <div>
                   <label className="text-xs font-bold text-slate-700 mb-1.5 block">Kata Sandi Saat Ini</label>
-                  <input type="password" required className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                  <input type="password" name="current_password" autoComplete="current-password" value={passwordData.current_password} onChange={e => setPasswordData('current_password', e.target.value)} required className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                  {passwordErrors.current_password && <p className="text-xs text-red-600 mt-1">{passwordErrors.current_password}</p>}
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-700 mb-1.5 block">Kata Sandi Baru</label>
-                  <input type="password" required className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                  <input type="password" name="password" autoComplete="new-password" value={passwordData.password} onChange={e => setPasswordData('password', e.target.value)} required className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                  {passwordErrors.password && <p className="text-xs text-red-600 mt-1">{passwordErrors.password}</p>}
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-700 mb-1.5 block">Konfirmasi Kata Sandi</label>
-                  <input type="password" required className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                  <input type="password" name="password_confirmation" autoComplete="new-password" value={passwordData.password_confirmation} onChange={e => setPasswordData('password_confirmation', e.target.value)} required className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                  {passwordErrors.password_confirmation && <p className="text-xs text-red-600 mt-1">{passwordErrors.password_confirmation}</p>}
                 </div>
                 <div className="flex justify-end pt-2">
-                  <Btn variant="primary" type="submit">Perbarui Kata Sandi</Btn>
+                  <Btn variant="primary" type="submit" disabled={passwordProcessing}>{passwordProcessing ? 'Menyimpan...' : 'Perbarui Kata Sandi'}</Btn>
                 </div>
               </form>
             </div>
@@ -592,40 +629,59 @@ function UserDashboardView({ user, stats }: { user: any; stats: any }) {
           {tab === "give_review" && (
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4 animate-fade-in max-w-2xl mx-auto">
               <h3 className="font-semibold text-slate-900 text-lg mb-4">Beri Ulasan Cabang</h3>
+              {stats.my_reviews?.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-slate-800">Ulasan Anda</h4>
+                  {stats.my_reviews.map((review: any) => (
+                    <div key={review.id} className="flex items-start justify-between gap-4 border-b border-slate-100 pb-3">
+                      <div>
+                        <p className="text-sm font-semibold text-slate-800">{review.branch?.name || 'Cabang'} · {Number(review.rating)}/5</p>
+                        <p className="text-sm text-slate-600">{review.review_text}</p>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <button type="button" className="text-xs text-indigo-600" onClick={() => {
+                          setEditingReviewId(review.id);
+                          setReviewData({ branch_id: String(review.branch_id), rating: Number(review.rating), review_text: review.review_text });
+                        }}>Edit</button>
+                        <button type="button" className="text-xs text-red-600" onClick={() => {
+                          if (confirm('Hapus ulasan ini?')) {
+                            router.delete(TenantReviewController.destroy.url(review.id), { preserveScroll: true });
+                          }
+                        }}>Hapus</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex gap-4 w-full mb-6">
                 <Star className="text-indigo-600 flex-shrink-0" size={24} />
                 <p className="text-sm text-indigo-900">Ulasan Anda sangat berarti untuk membantu kami terus meningkatkan kualitas layanan dan fasilitas cabang CozQta.</p>
               </div>
-              <form className="space-y-4 w-full" onSubmit={(e) => { 
-                  e.preventDefault(); 
-                  const form = e.target as HTMLFormElement;
-                  const branchId = (form.elements.namedItem('branch_id') as HTMLSelectElement)?.value;
-                  const reviewText = (form.elements.namedItem('review_text') as HTMLTextAreaElement)?.value;
-                  
-                  // if no branch_id selected, default to first rental history if available
-                  const finalBranchId = branchId || (stats.rental_history && stats.rental_history.length > 0 ? String(stats.rental_history[0].branch_id) : '');
-                  
-                  if (!finalBranchId) {
+              <form className="space-y-4 w-full" onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!editingReviewId && !reviewData.branch_id) {
                       showAlert({ icon: 'error', title: 'Oops', text: 'Pilih cabang terlebih dahulu' });
                       return;
                   }
 
-                  router.post('/reviews', {
-                      branch_id: finalBranchId,
-                      rating: reviewRating || 5,
-                      review_text: reviewText
-                  }, {
-                      onSuccess: () => {
-                          setTab('dashboard');
-                          setReviewRating(0);
-                          setReviewHoverRating(0);
-                          form.reset();
-                      }
-                  });
+                  const options = {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                      setEditingReviewId(null);
+                      setReviewHoverRating(0);
+                      resetReviewForm();
+                      handleTabChange('dashboard');
+                    },
+                  };
+                  if (editingReviewId) {
+                    putReview(TenantReviewController.update.url(editingReviewId), options);
+                  } else {
+                    postReview(TenantReviewController.store.url(), options);
+                  }
               }}>
                 <div>
                   <label className="text-xs font-bold text-slate-700 mb-1.5 block">Pilih Cabang (Sewa Terakhir)</label>
-                  <select name="branch_id" className="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none bg-white">
+                  <select name="branch_id" value={reviewData.branch_id} disabled={Boolean(editingReviewId)} onChange={e => setReviewData('branch_id', e.target.value)} className="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none bg-white">
                     {stats.rental_history && stats.rental_history.length > 0 ? (
                         stats.rental_history.map((h: any) => (
                             <option key={h.id} value={h.branch_id}>{h.branch_name} - Kamar {h.unit_number}</option>
@@ -642,11 +698,11 @@ function UserDashboardView({ user, stats }: { user: any; stats: any }) {
                       <button 
                         type="button" 
                         key={s} 
-                        onClick={() => setReviewRating(s)}
+                        onClick={() => setReviewData('rating', s)}
                         onMouseEnter={() => setReviewHoverRating(s)}
                         onMouseLeave={() => setReviewHoverRating(0)}
                         className={`p-2 rounded-lg transition-colors ${
-                          s <= (reviewHoverRating || reviewRating) 
+                          s <= (reviewHoverRating || reviewData.rating)
                           ? 'text-amber-400 hover:bg-amber-50' 
                           : 'text-slate-200 hover:bg-slate-50'
                         }`}
@@ -655,13 +711,16 @@ function UserDashboardView({ user, stats }: { user: any; stats: any }) {
                       </button>
                     ))}
                   </div>
+                  {reviewErrors.rating && <p className="text-xs text-red-600 mt-1">{reviewErrors.rating}</p>}
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-700 mb-1.5 block">Ulasan Anda</label>
-                  <textarea name="review_text" rows={4} required placeholder="Isi Ulasan" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm resize-none outline-none focus:ring-2 focus:ring-indigo-500/50"></textarea>
+                  <textarea name="review_text" rows={4} required value={reviewData.review_text} onChange={e => setReviewData('review_text', e.target.value)} placeholder="Isi Ulasan" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm resize-none outline-none focus:ring-2 focus:ring-indigo-500/50"></textarea>
+                  {reviewErrors.review_text && <p className="text-xs text-red-600 mt-1">{reviewErrors.review_text}</p>}
                 </div>
                 <div className="flex justify-end pt-2">
-                  <Btn variant="primary" type="submit">Kirim Ulasan</Btn>
+                  {editingReviewId && <Btn variant="outline" type="button" onClick={() => { setEditingReviewId(null); resetReviewForm(); }}>Batal</Btn>}
+                  <Btn variant="primary" type="submit" disabled={reviewProcessing}>{reviewProcessing ? 'Menyimpan...' : editingReviewId ? 'Simpan Perubahan' : 'Kirim Ulasan'}</Btn>
                 </div>
               </form>
             </div>

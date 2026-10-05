@@ -307,7 +307,7 @@ function Testimonials({ testimonials }: { testimonials: any[] }) {
               <div key={i} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center text-center justify-between">
                 <div className="flex flex-col items-center">
                   <div className="flex items-center gap-1 mb-4 text-amber-400">
-                    {[...Array(t.rating || 5)].map((_, idx) => (
+                    {Array.from({ length: Math.max(0, Math.min(5, Math.round(Number(t.rating) || 5))) }).map((_, idx) => (
                       <Star key={idx} size={16} className="fill-current" />
                     ))}
                   </div>

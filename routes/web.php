@@ -14,7 +14,10 @@ use App\Http\Controllers\Admin\RoomUnitController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TenantContractController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\PaymentHistoryController;
+use App\Http\Controllers\TenantReviewController;
 use App\Http\Middleware\EnsureProfileIsComplete;
 use App\Models\BookingAddon;
 use App\Models\BookingHeader;
@@ -475,6 +478,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware([EnsureProfileIsComplete::class])->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::post('profile/update', [DashboardController::class, 'updateProfile'])->name('profile.update.tenant');
+        Route::get('invoices/{paymentHeader}/download', [InvoiceController::class, 'download'])->name('invoices.download');
+        Route::get('payment-history/download', [PaymentHistoryController::class, 'download'])->name('payment-history.download');
+        Route::post('reviews', [TenantReviewController::class, 'store'])->name('reviews.store.tenant');
+        Route::put('reviews/{review}', [TenantReviewController::class, 'update'])->name('reviews.update.tenant');
+        Route::delete('reviews/{review}', [TenantReviewController::class, 'destroy'])->name('reviews.destroy.tenant');
 
         // Admin Settings Routes
         Route::prefix('admin/settings')->name('admin.settings.')->group(function () {
@@ -581,22 +589,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/{ticket}/status', [\App\Http\Controllers\TicketController::class, 'updateStatus']);
         });
 
-        // Tenant Review Route
-        Route::post('/reviews', function (Request $request) {
-            $request->validate([
-                'branch_id' => 'required|exists:branches,id',
-                'rating' => 'required|integer|min:1|max:5',
-                'review_text' => 'required|string',
-            ]);
-            \App\Models\Review::create([
-                'branch_id' => $request->branch_id,
-                'reviewer_name' => auth()->user()->name,
-                'rating' => $request->rating,
-                'review_text' => $request->review_text,
-                'is_published' => true,
-            ]);
-            return back()->with('flash', ['type' => 'success', 'message' => 'Ulasan Anda berhasil dikirim!']);
-        })->name('reviews.store.tenant');
     });
 });
 

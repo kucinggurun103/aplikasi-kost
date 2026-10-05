@@ -13,6 +13,7 @@ use App\Models\TenantContract;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class BookingController extends Controller
@@ -398,6 +399,12 @@ class BookingController extends Controller
 
     public function extendBooking(Request $request, BookingHeader $booking)
     {
+        $user = $request->user();
+
+        abort_unless(
+            $user->hasRole('admin') || ($user->hasRole('operator') && $user->branches()->whereKey($booking->branch_id)->exists()),
+            403,
+        );
         $request->validate([
             'rent_type' => 'required|in:Monthly,Daily',
             'duration_month' => 'required_if:rent_type,Monthly|integer|min:1|nullable',
@@ -405,52 +412,54 @@ class BookingController extends Controller
             'custom_price' => 'required_if:rent_type,Daily|numeric|min:0|nullable',
         ]);
 
-        $oldCheckOut = Carbon::parse($booking->check_out_date);
+        DB::transaction(function () use ($request, $booking): void {
+            $booking = BookingHeader::whereKey($booking->id)->lockForUpdate()->firstOrFail();
+            $contract = TenantContract::where('booking_header_id', $booking->id)
+                ->where('status', 'Active')
+                ->lockForUpdate()
+                ->firstOrFail();
+            $oldCheckOut = Carbon::parse($booking->check_out_date);
 
-        if ($request->rent_type === 'Daily') {
-            $durationDays = $request->duration_days;
-            $newCheckOut = $oldCheckOut->copy()->addDays($durationDays);
-            $amount = $request->custom_price;
+            if ($request->rent_type === 'Daily') {
+                $durationDays = (int) $request->duration_days;
+                $newCheckOut = $oldCheckOut->copy()->addDays($durationDays);
+                $amount = (float) $request->custom_price;
 
-            $booking->update([
-                'check_out_date' => $newCheckOut,
-                'duration_days' => $booking->duration_days + $durationDays,
-                'subtotal' => $booking->subtotal + $amount,
-                'grand_total' => $booking->grand_total + $amount,
+                $booking->update([
+                    'check_out_date' => $newCheckOut,
+                    'duration_days' => ($booking->duration_days ?? 0) + $durationDays,
+                    'subtotal' => $booking->subtotal + $amount,
+                    'grand_total' => $booking->grand_total + $amount,
+                ]);
+            } else {
+                $durationMonth = (int) $request->duration_month;
+                $newCheckOut = $oldCheckOut->copy()->addMonths($durationMonth);
+                $amount = $booking->monthly_price * $durationMonth;
+
+                $booking->update([
+                    'check_out_date' => $newCheckOut,
+                    'duration_month' => $booking->duration_month + $durationMonth,
+                    'subtotal' => $booking->subtotal + $amount,
+                    'grand_total' => $booking->grand_total + $amount,
+                ]);
+            }
+
+            PaymentHeader::create([
+                'payment_no' => 'PAY-EXT-'.time().'-'.rand(100, 999),
+                'booking_header_id' => $booking->id,
+                'invoice_date' => now(),
+                'due_date' => now()->addDays(1),
+                'subtotal' => $amount,
+                'grand_total' => $amount,
+                'payment_method' => 'Manual',
+                'status' => 'Unpaid',
             ]);
-        } else {
-            $durationMonth = $request->duration_month;
-            $newCheckOut = $oldCheckOut->copy()->addMonths($durationMonth);
-            $amount = $booking->monthly_price * $durationMonth;
 
-            $booking->update([
-                'check_out_date' => $newCheckOut,
-                'duration_month' => $booking->duration_month + $durationMonth,
-                'subtotal' => $booking->subtotal + $amount,
-                'grand_total' => $booking->grand_total + $amount,
-            ]);
-        }
-
-        // Generate bill for the extension
-        PaymentHeader::create([
-            'payment_no' => 'PAY-EXT-'.time().'-'.rand(100, 999),
-            'booking_header_id' => $booking->id,
-            'invoice_date' => now(),
-            'due_date' => now()->addDays(1),
-            'subtotal' => $amount,
-            'grand_total' => $amount,
-            'payment_method' => 'Manual',
-            'status' => 'Unpaid',
-        ]);
-
-        // Also update contract if exists
-        $contract = TenantContract::where('booking_header_id', $booking->id)->first();
-        if ($contract) {
             $contract->update([
                 'end_date' => $newCheckOut,
                 'notes' => $contract->notes."\n[Perpanjangan] S/d ".$newCheckOut->format('d M Y'),
             ]);
-        }
+        });
 
         return back()->with('success', 'Masa sewa berhasil diperpanjang. Tagihan baru telah dibuat.');
     }
