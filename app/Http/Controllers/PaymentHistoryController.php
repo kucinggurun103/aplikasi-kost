@@ -20,6 +20,10 @@ class PaymentHistoryController extends Controller
         return response()->streamDownload(
             static function () use ($payments): void {
                 $output = fopen('php://output', 'w');
+                if ($output === false) {
+                    throw new \RuntimeException('Unable to open payment history stream.');
+                }
+
                 fwrite($output, "\xEF\xBB\xBF");
                 fputcsv($output, ['Nomor Invoice', 'Tanggal', 'Nomor Booking', 'Status', 'Metode Pembayaran', 'Total'], ',', '"', '\\');
 

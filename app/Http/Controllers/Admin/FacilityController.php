@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class FacilityController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         // Validate or auto-assign branch for operators
         if (! $request->user()->hasRole('admin')) {
@@ -37,7 +37,7 @@ class FacilityController extends Controller
         return redirect()->back()->with('success', 'Fasilitas berhasil ditambahkan');
     }
 
-    public function update(Request $request, Facility $facility)
+    public function update(Request $request, Facility $facility): mixed
     {
         // Validate or auto-assign branch for operators
         if (! $request->user()->hasRole('admin')) {
@@ -68,7 +68,7 @@ class FacilityController extends Controller
         return redirect()->back()->with('success', 'Fasilitas berhasil diperbarui');
     }
 
-    public function destroy(Facility $facility)
+    public function destroy(Facility $facility): mixed
     {
         $facility->delete();
 

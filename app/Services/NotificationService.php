@@ -16,6 +16,7 @@ class NotificationService
     /**
      * Parse template by replacing placeholders with actual data
      */
+    /** @param array<string, mixed> $data */
     public static function parse(string $template, array $data): string
     {
         foreach ($data as $key => $value) {
@@ -28,6 +29,7 @@ class NotificationService
     /**
      * Send notification to a user using a specific template code
      */
+    /** @param array<string, mixed> $data */
     public static function send(string $templateCode, User $user, array $data = []): void
     {
         try {

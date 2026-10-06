@@ -4,35 +4,46 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string $slug
+ */
 class Branch extends Model
 {
+    /** @use HasFactory<\Database\Factories\BranchFactory> */
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
-    public function users()
+    /** @return BelongsToMany<User, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'> */
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'branch_users');
     }
 
-    public function roomTypes()
+    /** @return HasMany<RoomType, $this> */
+    public function roomTypes(): HasMany
     {
         return $this->hasMany(RoomType::class);
     }
 
-    public function paymentGateways()
+    /** @return HasMany<PaymentGateway, $this> */
+    public function paymentGateways(): HasMany
     {
         return $this->hasMany(PaymentGateway::class);
     }
 
-    public function roomCategories()
+    /** @return HasMany<RoomCategory, $this> */
+    public function roomCategories(): HasMany
     {
         return $this->hasMany(RoomCategory::class);
     }
 
-    public function facilities()
+    /** @return HasMany<Facility, $this> */
+    public function facilities(): HasMany
     {
         return $this->hasMany(Facility::class);
     }

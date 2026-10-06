@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,12 +50,14 @@ class User extends Authenticatable implements PasskeyUser
         ];
     }
 
-    public function roles()
+    /** @return BelongsToMany<Role, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'> */
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles');
     }
 
-    public function branches()
+    /** @return BelongsToMany<Branch, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'> */
+    public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class, 'branch_users')
             ->whereNull('branches.deleted_at')

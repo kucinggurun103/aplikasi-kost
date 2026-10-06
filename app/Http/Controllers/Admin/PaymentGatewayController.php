@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PaymentGatewayController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         $validated = $request->validate([
             'branch_id' => 'nullable|exists:branches,id',
@@ -51,7 +51,7 @@ class PaymentGatewayController extends Controller
         return back()->with('success', 'Metode pembayaran berhasil ditambahkan.');
     }
 
-    public function update(Request $request, PaymentGateway $paymentGateway)
+    public function update(Request $request, PaymentGateway $paymentGateway): mixed
     {
         $validated = $request->validate([
             'branch_id' => 'nullable|exists:branches,id',
@@ -96,7 +96,7 @@ class PaymentGatewayController extends Controller
         return back()->with('success', 'Metode pembayaran berhasil diperbarui.');
     }
 
-    public function destroy(PaymentGateway $paymentGateway)
+    public function destroy(PaymentGateway $paymentGateway): mixed
     {
         if ($paymentGateway->qr_image_path) {
             Storage::disk('public')->delete($paymentGateway->qr_image_path);
@@ -107,7 +107,7 @@ class PaymentGatewayController extends Controller
         return back()->with('success', 'Metode pembayaran berhasil dihapus.');
     }
 
-    public function toggleActive(PaymentGateway $paymentGateway)
+    public function toggleActive(PaymentGateway $paymentGateway): mixed
     {
         $paymentGateway->update(['is_active' => ! $paymentGateway->is_active]);
 

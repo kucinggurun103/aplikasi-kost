@@ -14,7 +14,7 @@ use Inertia\Inertia;
 class RBACController extends Controller
 {
     // Roles
-    public function storeRole(Request $request)
+    public function storeRole(Request $request): mixed
     {
         $this->authorizeAdmin($request);
 
@@ -32,7 +32,7 @@ class RBACController extends Controller
         return back();
     }
 
-    public function updateRole(Request $request, Role $role)
+    public function updateRole(Request $request, Role $role): mixed
     {
         $this->authorizeAdmin($request);
 
@@ -50,7 +50,7 @@ class RBACController extends Controller
         return back();
     }
 
-    public function destroyRole(Request $request, Role $role)
+    public function destroyRole(Request $request, Role $role): mixed
     {
         $this->authorizeAdmin($request);
 
@@ -68,7 +68,7 @@ class RBACController extends Controller
     }
 
     // Users
-    public function storeUser(Request $request)
+    public function storeUser(Request $request): mixed
     {
         $this->authorizeAdmin($request);
 
@@ -97,7 +97,7 @@ class RBACController extends Controller
         return back();
     }
 
-    public function updateUser(Request $request, User $user)
+    public function updateUser(Request $request, User $user): mixed
     {
         $this->authorizeAdmin($request);
 
@@ -131,7 +131,7 @@ class RBACController extends Controller
         return back();
     }
 
-    public function destroyUser(Request $request, User $user)
+    public function destroyUser(Request $request, User $user): mixed
     {
         $this->authorizeAdmin($request);
         abort_if($request->user()->is($user), 403);
@@ -143,7 +143,7 @@ class RBACController extends Controller
         return back();
     }
 
-    public function resetPassword(Request $request, User $user)
+    public function resetPassword(Request $request, User $user): mixed
     {
         $this->authorizeAdmin($request);
 

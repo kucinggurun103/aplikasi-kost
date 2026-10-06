@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    public function markAsRead(Request $request, $id)
+    public function markAsRead(Request $request, int $id): mixed
     {
         $notification = $request->user()->notifications()->where('id', $id)->first();
         if ($notification) {
@@ -16,7 +16,7 @@ class NotificationController extends Controller
         return back();
     }
 
-    public function markAllAsRead(Request $request)
+    public function markAllAsRead(Request $request): mixed
     {
         $request->user()->unreadNotifications->markAsRead();
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TenantContract extends Model
@@ -11,27 +12,32 @@ class TenantContract extends Model
 
     protected $guarded = [];
 
-    public function bookingHeader()
+    /** @return BelongsTo<BookingHeader, $this> */
+    public function bookingHeader(): BelongsTo
     {
         return $this->belongsTo(BookingHeader::class, 'booking_header_id');
     }
 
-    public function tenant()
+    /** @return BelongsTo<User, $this> */
+    public function tenant(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function branch()
+    /** @return BelongsTo<Branch, $this> */
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'branch_id');
     }
 
-    public function roomType()
+    /** @return BelongsTo<RoomType, $this> */
+    public function roomType(): BelongsTo
     {
         return $this->belongsTo(RoomType::class, 'room_type_id');
     }
 
-    public function roomUnit()
+    /** @return BelongsTo<RoomUnit, $this> */
+    public function roomUnit(): BelongsTo
     {
         return $this->belongsTo(RoomUnit::class, 'room_unit_id');
     }

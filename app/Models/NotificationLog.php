@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NotificationLog extends Model
 {
@@ -12,12 +13,14 @@ class NotificationLog extends Model
 
     const UPDATED_AT = null;
 
-    public function template()
+    /** @return BelongsTo<NotificationTemplate, $this> */
+    public function template(): BelongsTo
     {
         return $this->belongsTo(NotificationTemplate::class, 'notification_template_id');
     }
 
-    public function user()
+    /** @return BelongsTo<User, $this> */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

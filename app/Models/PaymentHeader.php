@@ -3,10 +3,15 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PaymentHeader extends Model
 {
+    /** @use HasFactory<\Database\Factories\PaymentHeaderFactory> */
+    use HasFactory;
+
     protected $guarded = [];
 
     protected function casts(): array
@@ -19,12 +24,13 @@ class PaymentHeader extends Model
         ];
     }
 
-    public function booking()
+    /** @return BelongsTo<BookingHeader, $this> */
+    public function booking(): BelongsTo
     {
         return $this->belongsTo(BookingHeader::class, 'booking_header_id');
     }
 
-    public static function generateMonthlyInvoices(BookingHeader $booking)
+    public static function generateMonthlyInvoices(BookingHeader $booking): void
     {
         $adminFee = WebSetting::first()->admin_fee ?? 25000;
         $insuranceFee = 50000; // As per web.php logic, but wait, did they choose insurance?

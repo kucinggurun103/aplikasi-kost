@@ -8,7 +8,7 @@ use Inertia\Inertia;
 
 class OnboardingController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): mixed
     {
         $user = $request->user();
         $profile = DB::table('user_profiles')->where('user_id', $user->id)->first();
@@ -23,7 +23,7 @@ class OnboardingController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         $request->validate([
             'phone_number' => ['required', 'string', 'max:30'],

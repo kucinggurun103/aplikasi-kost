@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RoomType extends Model
 {
+    /** @use HasFactory<\Database\Factories\RoomTypeFactory> */
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
@@ -19,27 +23,32 @@ class RoomType extends Model
         'deposit_price' => 'decimal:2',
     ];
 
-    public function branch()
+    /** @return BelongsTo<Branch, $this> */
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function category()
+    /** @return BelongsTo<RoomCategory, $this> */
+    public function category(): BelongsTo
     {
         return $this->belongsTo(RoomCategory::class, 'room_category_id');
     }
 
-    public function facilities()
+    /** @return BelongsToMany<Facility, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'> */
+    public function facilities(): BelongsToMany
     {
         return $this->belongsToMany(Facility::class, 'room_type_facilities');
     }
 
-    public function images()
+    /** @return HasMany<RoomImage, $this> */
+    public function images(): HasMany
     {
         return $this->hasMany(RoomImage::class)->orderBy('sort_order');
     }
 
-    public function units()
+    /** @return HasMany<RoomUnit, $this> */
+    public function units(): HasMany
     {
         return $this->hasMany(RoomUnit::class);
     }

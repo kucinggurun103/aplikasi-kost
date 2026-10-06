@@ -11,14 +11,14 @@ use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): mixed
     {
         $user = $request->user();
         $query = Ticket::with(['branch', 'user']);
 
-        if ($user->hasRole('tenant') || $user->role === 'tenant') {
+        if ($user->hasRole('tenant')) {
             $query->where('user_id', $user->id);
-        } elseif (! $user->hasRole('admin') && $user->role !== 'admin') {
+        } elseif (! $user->hasRole('admin')) {
             $branchIds = Branch::whereHas('users', function ($q) use ($user) {
                 $q->where('users.id', $user->id);
             })->pluck('id');
@@ -30,7 +30,7 @@ class TicketController extends Controller
         return response()->json($tickets);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         $request->validate([
             'category' => 'required|string',
@@ -74,14 +74,14 @@ class TicketController extends Controller
         return response()->json($ticket);
     }
 
-    public function show(Ticket $ticket)
+    public function show(Ticket $ticket): mixed
     {
         $ticket->load(['user', 'branch', 'replies.user']);
 
         return response()->json($ticket);
     }
 
-    public function reply(Request $request, Ticket $ticket)
+    public function reply(Request $request, Ticket $ticket): mixed
     {
         $request->validate([
             'message' => 'required|string',
@@ -103,7 +103,7 @@ class TicketController extends Controller
         return response()->json($reply->load('user'));
     }
 
-    public function updateStatus(Request $request, Ticket $ticket)
+    public function updateStatus(Request $request, Ticket $ticket): mixed
     {
         $request->validate([
             'status' => 'required|string|in:Open,In Progress,Resolved,Closed',

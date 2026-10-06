@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class NotificationTemplateController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -27,7 +27,7 @@ class NotificationTemplateController extends Controller
         return back()->with('success', 'Template notifikasi berhasil dibuat.');
     }
 
-    public function update(Request $request, NotificationTemplate $notificationTemplate)
+    public function update(Request $request, NotificationTemplate $notificationTemplate): mixed
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -46,7 +46,7 @@ class NotificationTemplateController extends Controller
         return back()->with('success', 'Template notifikasi berhasil diperbarui.');
     }
 
-    public function destroy(NotificationTemplate $notificationTemplate)
+    public function destroy(NotificationTemplate $notificationTemplate): mixed
     {
         $notificationTemplate->delete();
 

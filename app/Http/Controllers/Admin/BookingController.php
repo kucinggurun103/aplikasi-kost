@@ -61,7 +61,7 @@ class BookingController extends Controller
         return back()->with('success', 'Berhasil mengalokasikan unit kamar untuk booking ini.');
     }
 
-    public function updateStatus(Request $request, BookingHeader $booking)
+    public function updateStatus(Request $request, BookingHeader $booking): mixed
     {
         $request->validate([
             'status' => 'required|in:Pending,Confirmed,Checked In,Completed,Cancelled',
@@ -120,7 +120,7 @@ class BookingController extends Controller
         return back()->with('success', 'Status booking berhasil diperbarui.');
     }
 
-    public function manualBooking(Request $request)
+    public function manualBooking(Request $request): mixed
     {
         $request->validate([
             'tenant_id' => 'required|exists:users,id',
@@ -136,6 +136,7 @@ class BookingController extends Controller
         ]);
 
         $roomType = RoomType::findOrFail($request->room_type_id);
+        /** @var RoomType $roomType */
         $checkIn = Carbon::parse($request->check_in_date);
 
         $monthlyPrice = $roomType->monthly_price ?? 0;
@@ -273,20 +274,22 @@ class BookingController extends Controller
                         RoomUnit::where('id', $booking->room_unit_id)->update(['status' => 'Occupied']);
                     }
 
-                    TenantContract::create([
-                        'contract_number' => 'CTR-'.time().'-'.rand(100, 999),
-                        'booking_header_id' => $booking->id,
-                        'user_id' => $booking->tenant_id,
-                        'branch_id' => $booking->branch_id,
-                        'room_type_id' => $booking->room_type_id,
-                        'room_unit_id' => $booking->room_unit_id,
-                        'start_date' => $booking->check_in_date,
-                        'end_date' => $booking->check_out_date,
-                        'monthly_price' => $booking->monthly_price,
-                        'deposit_amount' => $booking->deposit,
-                        'status' => 'Active',
-                        'notes' => 'Generated automatically from payment.',
-                    ]);
+                    if ($booking->room_unit_id) {
+                        TenantContract::create([
+                            'contract_number' => 'CTR-'.time().'-'.rand(100, 999),
+                            'booking_header_id' => $booking->id,
+                            'user_id' => $booking->tenant_id,
+                            'branch_id' => $booking->branch_id,
+                            'room_type_id' => $booking->room_type_id,
+                            'room_unit_id' => $booking->room_unit_id,
+                            'start_date' => $booking->check_in_date,
+                            'end_date' => $booking->check_out_date,
+                            'monthly_price' => $booking->monthly_price,
+                            'deposit_amount' => $booking->deposit,
+                            'status' => 'Active',
+                            'notes' => 'Generated automatically from payment.',
+                        ]);
+                    }
                 }
             }
         }
@@ -294,7 +297,7 @@ class BookingController extends Controller
         return back()->with('success', 'Booking manual berhasil dibuat.');
     }
 
-    public function manualPay(Request $request, BookingHeader $booking)
+    public function manualPay(Request $request, BookingHeader $booking): mixed
     {
         $request->validate([
             'payment_proof' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -351,7 +354,7 @@ class BookingController extends Controller
                 RoomUnit::where('id', $booking->room_unit_id)->update(['status' => 'Occupied']);
             }
 
-            if ($isFirstRentPayment) {
+            if ($isFirstRentPayment && $booking->room_unit_id) {
                 TenantContract::create([
                     'contract_number' => 'CTR-'.time().'-'.rand(100, 999),
                     'booking_header_id' => $booking->id,
@@ -372,13 +375,13 @@ class BookingController extends Controller
         NotificationService::send('PAYMENT_SUCCESS', $booking->tenant, [
             'name' => $booking->tenant->name,
             'room_name' => $booking->roomUnit->unit_number ?? 'N/A',
-            'total_amount' => number_format($payment ? $payment->grand_total : 0, 0, ',', '.'),
+            'total_amount' => number_format($payment->grand_total, 0, ',', '.'),
         ]);
 
         return back()->with('success', 'Pembayaran manual berhasil dikonfirmasi.');
     }
 
-    public function refundDeposit(Request $request, BookingHeader $booking)
+    public function refundDeposit(Request $request, BookingHeader $booking): mixed
     {
         if ($booking->deposit > 0 && $booking->deposit_status !== 'Refunded') {
             $booking->update([
@@ -399,7 +402,7 @@ class BookingController extends Controller
         return back()->with('error', 'Deposit tidak valid atau sudah di-refund.');
     }
 
-    public function extendBooking(Request $request, BookingHeader $booking)
+    public function extendBooking(Request $request, BookingHeader $booking): mixed
     {
         $user = $request->user();
 
@@ -466,7 +469,7 @@ class BookingController extends Controller
         return back()->with('success', 'Masa sewa berhasil diperpanjang. Tagihan baru telah dibuat.');
     }
 
-    public function terminateBooking(Request $request, BookingHeader $booking)
+    public function terminateBooking(Request $request, BookingHeader $booking): mixed
     {
         $request->validate([
             'notes' => 'nullable|string',
@@ -496,7 +499,7 @@ class BookingController extends Controller
         return back()->with('success', 'Booking berhasil dihentikan. Kamar kini berstatus Available.');
     }
 
-    public function updateInvoiceDueDate(Request $request, PaymentHeader $paymentHeader)
+    public function updateInvoiceDueDate(Request $request, PaymentHeader $paymentHeader): mixed
     {
         $request->validate([
             'due_date' => 'required|date',
