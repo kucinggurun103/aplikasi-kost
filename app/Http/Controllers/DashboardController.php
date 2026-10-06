@@ -25,12 +25,13 @@ use App\Models\UserProfile;
 use App\Models\WebSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): mixed
     {
         $user = $request->user();
         $isAdmin = $user->hasRole('admin');
@@ -336,7 +337,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function updateProfile(Request $request)
+    public function updateProfile(Request $request): mixed
     {
         $user = $request->user();
 
@@ -383,7 +384,7 @@ class DashboardController extends Controller
         return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
     }
 
-    private function compressAndStoreImage($imageFile, $directory = 'profiles')
+    private function compressAndStoreImage(UploadedFile $imageFile, string $directory = 'profiles'): string
     {
         $extension = strtolower($imageFile->getClientOriginalExtension());
         $filename = Str::random(40).'.webp';
@@ -411,7 +412,7 @@ class DashboardController extends Controller
 
             if ($width > $maxWidth) {
                 $newWidth = $maxWidth;
-                $newHeight = (int) floor($height * ($maxWidth / $width));
+                $newHeight = max(1, (int) floor($height * ($maxWidth / $width)));
                 $resized = imagecreatetruecolor($newWidth, $newHeight);
 
                 // Preserve transparency
@@ -419,7 +420,9 @@ class DashboardController extends Controller
                     imagealphablending($resized, false);
                     imagesavealpha($resized, true);
                     $transparent = imagecolorallocatealpha($resized, 255, 255, 255, 127);
-                    imagefilledrectangle($resized, 0, 0, $newWidth, $newHeight, $transparent);
+                    if ($transparent !== false) {
+                        imagefilledrectangle($resized, 0, 0, $newWidth, $newHeight, $transparent);
+                    }
                 }
 
                 imagecopyresampled($resized, $sourceImage, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
@@ -433,6 +436,6 @@ class DashboardController extends Controller
             return $path;
         }
 
-        return $imageFile->store($directory, 'public');
+        return $imageFile->store($directory, 'public') ?: throw new \RuntimeException('Unable to store profile image.');
     }
 }

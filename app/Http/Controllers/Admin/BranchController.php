@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class BranchController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         $validated = $request->validate([
             'code' => 'required|string|max:30|unique:branches,code',
@@ -28,7 +28,7 @@ class BranchController extends Controller
         return redirect()->back()->with('success', 'Cabang berhasil ditambahkan');
     }
 
-    public function update(Request $request, Branch $branch)
+    public function update(Request $request, Branch $branch): mixed
     {
         $validated = $request->validate([
             'code' => 'required|string|max:30|unique:branches,code,'.$branch->id,
@@ -48,7 +48,7 @@ class BranchController extends Controller
         return redirect()->back()->with('success', 'Cabang berhasil diperbarui');
     }
 
-    public function destroy(Branch $branch)
+    public function destroy(Branch $branch): mixed
     {
         // Iterate to fire model events (if any) or explicitly delete relations
         foreach ($branch->roomTypes as $roomType) {
@@ -63,7 +63,7 @@ class BranchController extends Controller
         return redirect()->back()->with('success', 'Cabang berhasil dihapus');
     }
 
-    public function assignOperator(Request $request, Branch $branch)
+    public function assignOperator(Request $request, Branch $branch): mixed
     {
         $validated = $request->validate([
             'user_ids' => 'array',

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\BookingHeader;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -9,12 +10,12 @@ class NewBookingNotification extends Notification
 {
     use Queueable;
 
-    public $booking;
+    public BookingHeader $booking;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($booking)
+    public function __construct(BookingHeader $booking)
     {
         $this->booking = $booking;
     }

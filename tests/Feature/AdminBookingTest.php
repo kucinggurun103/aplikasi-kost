@@ -3,6 +3,7 @@
 use App\Models\BookingHeader;
 use App\Models\Branch;
 use App\Models\PaymentHeader;
+use App\Models\Role;
 use App\Models\RoomType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,14 +13,19 @@ use Illuminate\Support\Facades\Storage;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->admin = User::factory()->create(['role' => 'admin']);
-    $this->tenant = User::factory()->create(['role' => 'tenant']);
+    $adminRole = Role::create(['name' => 'Administrator', 'code' => 'admin']);
+    $tenantRole = Role::create(['name' => 'Tenant', 'code' => 'tenant']);
+
+    $this->admin = User::factory()->create();
+    $this->admin->roles()->attach($adminRole);
+    $this->tenant = User::factory()->create();
+    $this->tenant->roles()->attach($tenantRole);
     $this->branch = Branch::factory()->create();
     $this->roomType = RoomType::factory()->create([
         'branch_id' => $this->branch->id,
         'booking_price' => 250000,
         'monthly_price' => 1500000,
-        'deposit_amount' => 500000,
+        'deposit_price' => 500000,
     ]);
 });
 
@@ -32,7 +38,7 @@ it('can create a manual booking without payment proof', function () {
         'check_in_date' => now()->format('Y-m-d'),
     ]);
 
-    $response->assertSuccessful();
+    $response->assertRedirect();
 
     $booking = BookingHeader::where('tenant_id', $this->tenant->id)->first();
     expect($booking)->not->toBeNull();
@@ -58,7 +64,7 @@ it('can create a manual booking with payment proof directly', function () {
         'payment_proof' => $file,
     ]);
 
-    $response->assertSuccessful();
+    $response->assertRedirect();
 
     $booking = BookingHeader::where('tenant_id', $this->tenant->id)->first();
 
@@ -104,7 +110,7 @@ it('can manually pay an existing invoice', function () {
         'payment_proof' => $file,
     ]);
 
-    $response->assertSuccessful();
+    $response->assertRedirect();
 
     $invoice->refresh();
     expect($invoice->status)->toBe('Paid');

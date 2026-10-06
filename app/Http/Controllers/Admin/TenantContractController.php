@@ -12,7 +12,7 @@ use Inertia\Inertia;
 
 class TenantContractController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): mixed
     {
         $user = $request->user();
         abort_unless($user->hasRole('admin') || $user->hasRole('operator'), 403);
@@ -32,7 +32,7 @@ class TenantContractController extends Controller
         ]);
     }
 
-    public function terminate(Request $request, TenantContract $contract)
+    public function terminate(Request $request, TenantContract $contract): mixed
     {
         $this->authorizeContractAccess($request->user(), $contract);
 

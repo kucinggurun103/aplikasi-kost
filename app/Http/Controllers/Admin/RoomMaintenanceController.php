@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 class RoomMaintenanceController extends Controller
 {
-    public function index()
+    public function index(): mixed
     {
         // Get all units grouped by branch for the grid view
         $units = RoomUnit::with(['roomType.branch', 'roomType.category'])
@@ -24,7 +24,7 @@ class RoomMaintenanceController extends Controller
         ]);
     }
 
-    public function updateStatus(Request $request, RoomUnit $unit)
+    public function updateStatus(Request $request, RoomUnit $unit): mixed
     {
         $request->validate([
             'status' => 'required|in:Available,Maintenance',
@@ -39,7 +39,7 @@ class RoomMaintenanceController extends Controller
         return back()->with('success', 'Status unit kamar berhasil diperbarui.');
     }
 
-    public function complete(Request $request, RoomUnit $unit)
+    public function complete(Request $request, RoomUnit $unit): mixed
     {
         if ($unit->status !== 'Maintenance') {
             return back()->with('error', 'Unit kamar tidak sedang dalam maintenance.');

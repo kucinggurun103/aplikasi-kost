@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         // Validate or auto-assign branch for operators
         if (! $request->user()->hasRole('admin')) {
@@ -37,7 +37,7 @@ class CategoryController extends Controller
         return redirect()->back()->with('success', 'Kategori kamar berhasil ditambahkan');
     }
 
-    public function update(Request $request, RoomCategory $category)
+    public function update(Request $request, RoomCategory $category): mixed
     {
         // Validate or auto-assign branch for operators
         if (! $request->user()->hasRole('admin')) {
@@ -66,7 +66,7 @@ class CategoryController extends Controller
         return redirect()->back()->with('success', 'Kategori kamar berhasil diperbarui');
     }
 
-    public function destroy(RoomCategory $category)
+    public function destroy(RoomCategory $category): mixed
     {
         $category->delete();
 

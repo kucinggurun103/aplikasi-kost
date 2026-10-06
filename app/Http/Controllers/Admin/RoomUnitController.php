@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 
 class RoomUnitController extends Controller
 {
-    public function store(Request $request, RoomType $roomType)
+    public function store(Request $request, RoomType $roomType): mixed
     {
         $amount = (int) $request->input('amount', 1);
         if ($amount < 1) {
@@ -29,7 +29,7 @@ class RoomUnitController extends Controller
         for ($i = 0; $i < $amount; $i++) {
             $currentIndex = $startNumber + $i;
             $count = $roomType->units()->withTrashed()->count() + $i; // for internal unique code
-            $unitCode = $roomType->type_code.'-U'.str_pad($count + 1, 2, '0', STR_PAD_LEFT);
+            $unitCode = $roomType->type_code.'-U'.str_pad((string) ($count + 1), 2, '0', STR_PAD_LEFT);
 
             $unitIdentifier = (string) $currentIndex;
             if ($unitFormat === 'alphabet') {
@@ -79,7 +79,7 @@ class RoomUnitController extends Controller
         return redirect()->back()->with('success', $amount.' Unit kamar berhasil ditambahkan');
     }
 
-    public function update(Request $request, RoomUnit $roomUnit)
+    public function update(Request $request, RoomUnit $roomUnit): mixed
     {
         $request->validate([
             'status' => 'required|string',
@@ -106,7 +106,7 @@ class RoomUnitController extends Controller
         return redirect()->back()->with('success', 'Unit kamar berhasil diupdate');
     }
 
-    public function destroy(RoomUnit $roomUnit)
+    public function destroy(RoomUnit $roomUnit): mixed
     {
         $roomUnit->delete();
 

@@ -7,12 +7,13 @@ use App\Models\RoomImage;
 use App\Models\RoomType;
 use App\Models\RoomUnit;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class RoomTypeController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         // Validate or auto-assign branch for operators
         if (! $request->user()->hasRole('admin')) {
@@ -118,7 +119,7 @@ class RoomTypeController extends Controller
 
                 RoomUnit::create([
                     'room_type_id' => $roomType->id,
-                    'unit_code' => $roomType->type_code.'-U'.str_pad($currentIndex, 2, '0', STR_PAD_LEFT),
+                    'unit_code' => $roomType->type_code.'-U'.str_pad((string) $currentIndex, 2, '0', STR_PAD_LEFT),
                     'unit_number' => $unitName,
                     'floor' => $floor,
                     'status' => 'Available',
@@ -130,7 +131,7 @@ class RoomTypeController extends Controller
         return redirect()->back()->with('success', 'Tipe kamar berhasil ditambahkan');
     }
 
-    public function update(Request $request, RoomType $roomType)
+    public function update(Request $request, RoomType $roomType): mixed
     {
         // Validate or auto-assign branch for operators
         if (! $request->user()->hasRole('admin')) {
@@ -212,7 +213,7 @@ class RoomTypeController extends Controller
         return redirect()->back()->with('success', 'Tipe kamar berhasil diperbarui');
     }
 
-    public function uploadImages(Request $request, RoomType $roomType)
+    public function uploadImages(Request $request, RoomType $roomType): mixed
     {
         $request->validate([
             'images' => 'required|array|min:1',
@@ -237,7 +238,7 @@ class RoomTypeController extends Controller
         return redirect()->back()->with('success', 'Gambar berhasil diunggah');
     }
 
-    public function destroyImage(RoomImage $image)
+    public function destroyImage(RoomImage $image): mixed
     {
         $roomType = $image->roomType;
 
@@ -257,7 +258,7 @@ class RoomTypeController extends Controller
         return redirect()->back()->with('success', 'Gambar berhasil dihapus');
     }
 
-    public function destroy(RoomType $roomType)
+    public function destroy(RoomType $roomType): mixed
     {
         // Images are cascade deleted in DB, but files in storage won't be deleted automatically
         foreach ($roomType->images as $image) {
@@ -271,7 +272,7 @@ class RoomTypeController extends Controller
         return redirect()->back()->with('success', 'Tipe kamar berhasil dihapus');
     }
 
-    private function compressAndStoreImage($imageFile)
+    private function compressAndStoreImage(UploadedFile $imageFile): string
     {
         $extension = strtolower($imageFile->getClientOriginalExtension());
         $filename = Str::random(40).'.'.($extension == 'jpeg' ? 'jpg' : $extension);
@@ -299,7 +300,7 @@ class RoomTypeController extends Controller
 
             if ($width > $maxWidth) {
                 $newWidth = $maxWidth;
-                $newHeight = (int) floor($height * ($maxWidth / $width));
+                $newHeight = max(1, (int) floor($height * ($maxWidth / $width)));
                 $resized = imagecreatetruecolor($newWidth, $newHeight);
 
                 // Preserve transparency
@@ -307,7 +308,9 @@ class RoomTypeController extends Controller
                     imagealphablending($resized, false);
                     imagesavealpha($resized, true);
                     $transparent = imagecolorallocatealpha($resized, 255, 255, 255, 127);
-                    imagefilledrectangle($resized, 0, 0, $newWidth, $newHeight, $transparent);
+                    if ($transparent !== false) {
+                        imagefilledrectangle($resized, 0, 0, $newWidth, $newHeight, $transparent);
+                    }
                 }
 
                 imagecopyresampled($resized, $sourceImage, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
@@ -329,6 +332,6 @@ class RoomTypeController extends Controller
         }
 
         // Fallback
-        return $imageFile->store('room_images', 'public');
+        return $imageFile->store('room_images', 'public') ?: throw new \RuntimeException('Unable to store room image.');
     }
 }

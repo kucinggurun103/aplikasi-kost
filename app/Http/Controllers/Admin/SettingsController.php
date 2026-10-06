@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
-    public function updateWebSettings(Request $request)
+    public function updateWebSettings(Request $request): mixed
     {
         $request->validate([
             'site_name' => 'required|string|max:255',
@@ -63,7 +63,7 @@ class SettingsController extends Controller
         return back()->with('success', 'Pengaturan website berhasil diperbarui!');
     }
 
-    public function storeSocial(Request $request)
+    public function storeSocial(Request $request): mixed
     {
         $validated = $request->validate([
             'platform' => 'required|string|max:100',
@@ -78,7 +78,7 @@ class SettingsController extends Controller
         return back()->with('success', 'Social media berhasil ditambahkan!');
     }
 
-    public function updateSocial(Request $request, SocialMedia $social)
+    public function updateSocial(Request $request, SocialMedia $social): mixed
     {
         $validated = $request->validate([
             'platform' => 'required|string|max:100',
@@ -93,14 +93,14 @@ class SettingsController extends Controller
         return back()->with('success', 'Social media berhasil diperbarui!');
     }
 
-    public function destroySocial(SocialMedia $social)
+    public function destroySocial(SocialMedia $social): mixed
     {
         $social->delete();
 
         return back()->with('success', 'Social media berhasil dihapus!');
     }
 
-    public function storeFaq(Request $request)
+    public function storeFaq(Request $request): mixed
     {
         $validated = $request->validate([
             'question' => 'required|string',
@@ -114,7 +114,7 @@ class SettingsController extends Controller
         return back()->with('success', 'FAQ berhasil ditambahkan!');
     }
 
-    public function updateFaq(Request $request, Faq $faq)
+    public function updateFaq(Request $request, Faq $faq): mixed
     {
         $validated = $request->validate([
             'question' => 'required|string',
@@ -128,14 +128,14 @@ class SettingsController extends Controller
         return back()->with('success', 'FAQ berhasil diperbarui!');
     }
 
-    public function destroyFaq(Faq $faq)
+    public function destroyFaq(Faq $faq): mixed
     {
         $faq->delete();
 
         return back()->with('success', 'FAQ berhasil dihapus!');
     }
 
-    public function storeDiscountRule(Request $request)
+    public function storeDiscountRule(Request $request): mixed
     {
         $validated = $request->validate([
             'minimum_months' => 'required|integer|min:1',
@@ -148,7 +148,7 @@ class SettingsController extends Controller
         return back()->with('success', 'Aturan Diskon berhasil ditambahkan!');
     }
 
-    public function updateDiscountRule(Request $request, DiscountRule $discountRule)
+    public function updateDiscountRule(Request $request, DiscountRule $discountRule): mixed
     {
         $validated = $request->validate([
             'minimum_months' => 'required|integer|min:1',
@@ -161,7 +161,7 @@ class SettingsController extends Controller
         return back()->with('success', 'Aturan Diskon berhasil diperbarui!');
     }
 
-    public function destroyDiscountRule(DiscountRule $discountRule)
+    public function destroyDiscountRule(DiscountRule $discountRule): mixed
     {
         $discountRule->delete();
 

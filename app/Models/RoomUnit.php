@@ -12,6 +12,7 @@ class RoomUnit extends Model
 
     protected $guarded = [];
 
+    /** @return BelongsTo<RoomType, $this> */
     public function roomType(): BelongsTo
     {
         return $this->belongsTo(RoomType::class);

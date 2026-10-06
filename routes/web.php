@@ -40,7 +40,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 if (! function_exists('mapRoomUnit')) {
-    function mapRoomUnit($unit)
+    /** @return array<string, mixed> */
+    function mapRoomUnit(RoomUnit $unit): array
     {
         $room = $unit->roomType;
 
@@ -136,6 +137,7 @@ Route::get('/rooms/{id}', function ($id) {
     // ID is room unit ID
     $unit = RoomUnit::with(['roomType.branch', 'roomType.category', 'roomType.facilities', 'roomType.images'])
         ->findOrFail($id);
+    /** @var RoomUnit $unit */
 
     $similar = RoomUnit::with(['roomType.branch', 'roomType.category', 'roomType.facilities', 'roomType.images'])
         ->where('id', '!=', $id)
@@ -169,6 +171,7 @@ Route::get('/bookings/room/{room_id}', function (Request $request, $room_id) {
             ->find($room_id);
 
         if ($unit) {
+            /** @var RoomUnit $unit */
             $room = mapRoomUnit($unit);
         }
     }
@@ -235,6 +238,7 @@ Route::post('/payments/upload-proof', function (Request $request) {
     ]);
 
     $paymentHeader = PaymentHeader::find($request->payment_id);
+    /** @var PaymentHeader|null $paymentHeader */
 
     if (! $paymentHeader) {
         return back()->with('flash', ['type' => 'error', 'message' => 'Data tagihan tidak ditemukan.']);
@@ -258,6 +262,7 @@ Route::post('/payments/simulate-gateway', function (Request $request) {
     ]);
 
     $paymentHeader = PaymentHeader::find($request->payment_id);
+    /** @var PaymentHeader|null $paymentHeader */
 
     if (! $paymentHeader) {
         return back()->with('flash', ['type' => 'error', 'message' => 'Data tagihan tidak ditemukan.']);
@@ -270,6 +275,7 @@ Route::post('/payments/simulate-gateway', function (Request $request) {
     ]);
 
     $booking = clone $paymentHeader->booking;
+    /** @var BookingHeader $booking */
 
     $totalPaid = PaymentHeader::where('booking_header_id', $booking->id)
         ->where('status', 'Paid')
@@ -335,6 +341,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
 
         $unit = RoomUnit::with('roomType')->findOrFail($request->room_id);
+        /** @var RoomUnit $unit */
         $monthlyPrice = $unit->roomType->monthly_price ?? 0;
         $subtotal = $monthlyPrice * $request->duration;
         $insuranceFee = $request->insurance ? 50000 : 0;
