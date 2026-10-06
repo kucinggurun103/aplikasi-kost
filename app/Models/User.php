@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,13 +51,13 @@ class User extends Authenticatable implements PasskeyUser
         ];
     }
 
-    /** @return BelongsToMany<Role, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'> */
+    /** @return BelongsToMany<Role, $this, Pivot, 'pivot'> */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles');
     }
 
-    /** @return BelongsToMany<Branch, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'> */
+    /** @return BelongsToMany<Branch, $this, Pivot, 'pivot'> */
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class, 'branch_users')

@@ -138,7 +138,6 @@ Route::get('/rooms/{id}', function ($id) {
     $unit = RoomUnit::with(['roomType.branch', 'roomType.category', 'roomType.facilities', 'roomType.images'])
         ->findOrFail($id);
     /** @var RoomUnit $unit */
-
     $similar = RoomUnit::with(['roomType.branch', 'roomType.category', 'roomType.facilities', 'roomType.images'])
         ->where('id', '!=', $id)
         ->whereHas('roomType', function ($q) use ($unit) {
@@ -239,7 +238,6 @@ Route::post('/payments/upload-proof', function (Request $request) {
 
     $paymentHeader = PaymentHeader::find($request->payment_id);
     /** @var PaymentHeader|null $paymentHeader */
-
     if (! $paymentHeader) {
         return back()->with('flash', ['type' => 'error', 'message' => 'Data tagihan tidak ditemukan.']);
     }
@@ -263,7 +261,6 @@ Route::post('/payments/simulate-gateway', function (Request $request) {
 
     $paymentHeader = PaymentHeader::find($request->payment_id);
     /** @var PaymentHeader|null $paymentHeader */
-
     if (! $paymentHeader) {
         return back()->with('flash', ['type' => 'error', 'message' => 'Data tagihan tidak ditemukan.']);
     }
@@ -276,7 +273,6 @@ Route::post('/payments/simulate-gateway', function (Request $request) {
 
     $booking = clone $paymentHeader->booking;
     /** @var BookingHeader $booking */
-
     $totalPaid = PaymentHeader::where('booking_header_id', $booking->id)
         ->where('status', 'Paid')
         ->sum('grand_total');
