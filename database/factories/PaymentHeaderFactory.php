@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\PaymentHeader;
 use App\Models\BookingHeader;
+use App\Models\PaymentHeader;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

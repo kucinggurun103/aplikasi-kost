@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use Database\Factories\RoomTypeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RoomType extends Model
 {
-    /** @use HasFactory<\Database\Factories\RoomTypeFactory> */
+    /** @use HasFactory<RoomTypeFactory> */
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
@@ -35,7 +37,7 @@ class RoomType extends Model
         return $this->belongsTo(RoomCategory::class, 'room_category_id');
     }
 
-    /** @return BelongsToMany<Facility, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'> */
+    /** @return BelongsToMany<Facility, $this, Pivot, 'pivot'> */
     public function facilities(): BelongsToMany
     {
         return $this->belongsToMany(Facility::class, 'room_type_facilities');

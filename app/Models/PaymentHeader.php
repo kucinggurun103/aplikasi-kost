@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Database\Factories\PaymentHeaderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PaymentHeader extends Model
 {
-    /** @use HasFactory<\Database\Factories\PaymentHeaderFactory> */
+    /** @use HasFactory<PaymentHeaderFactory> */
     use HasFactory;
 
     protected $guarded = [];

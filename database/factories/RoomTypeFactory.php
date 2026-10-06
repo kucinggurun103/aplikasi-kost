@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\RoomType;
 use App\Models\Branch;
 use App\Models\RoomCategory;
+use App\Models\RoomType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

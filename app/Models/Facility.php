@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Facility extends Model
@@ -13,7 +14,7 @@ class Facility extends Model
 
     protected $guarded = [];
 
-    /** @return BelongsToMany<RoomType, $this, \Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'> */
+    /** @return BelongsToMany<RoomType, $this, Pivot, 'pivot'> */
     public function roomTypes(): BelongsToMany
     {
         return $this->belongsToMany(RoomType::class, 'room_type_facilities');
