@@ -2,6 +2,7 @@
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Support\Facades\Schema;
 
 test('guests are redirected to the login page', function () {
@@ -19,8 +20,21 @@ test('authenticated users can visit the dashboard', function () {
     $response->assertOk();
 });
 
+test('incomplete profile redirects tenant to onboarding', function () {
+    $tenant = User::factory()->create();
+    $this->actingAs($tenant);
+
+    $response = $this->get(route('dashboard'));
+    $response->assertRedirect(route('onboarding.index'));
+});
+
 test('tenant users can visit the dashboard without crashing', function () {
     $tenant = User::factory()->create();
+    UserProfile::create([
+        'user_id' => $tenant->id,
+        'identity_number' => 'ID-'.$tenant->id,
+        'phone_number' => '081234567890',
+    ]);
     $this->actingAs($tenant);
 
     $response = $this->get(route('dashboard'));
@@ -29,6 +43,11 @@ test('tenant users can visit the dashboard without crashing', function () {
 
 test('tenant dashboard handles reviews safely even if user_id column is absent', function () {
     $tenant = User::factory()->create();
+    UserProfile::create([
+        'user_id' => $tenant->id,
+        'identity_number' => 'ID-'.$tenant->id,
+        'phone_number' => '081234567890',
+    ]);
     $this->actingAs($tenant);
 
     // Drop column in test to simulate production database before migration
