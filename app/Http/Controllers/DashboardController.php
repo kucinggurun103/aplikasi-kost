@@ -27,6 +27,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class DashboardController extends Controller
@@ -115,7 +116,17 @@ class DashboardController extends Controller
                 'profile_photo_url' => $profilePhoto ? asset('storage/'.$profilePhoto) : null,
                 'profile' => $profile,
                 'rental_history' => $rentalHistory,
-                'my_reviews' => Review::with('branch')->where('user_id', $user->id)->latest()->get(),
+                'my_reviews' => (function () use ($user) {
+                    try {
+                        if (Schema::hasColumn('reviews', 'user_id')) {
+                            return Review::with('branch')->where('user_id', $user->id)->latest()->get();
+                        }
+
+                        return Review::with('branch')->where('reviewer_name', $user->name)->latest()->get();
+                    } catch (\Throwable) {
+                        return collect();
+                    }
+                })(),
                 'active_contract' => $activeContract,
                 'booking_history' => $bookingHistory,
                 'pending_invoices' => $pendingInvoices,

@@ -6,6 +6,7 @@ use App\Models\BookingHeader;
 use App\Models\Review;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class TenantReviewController extends Controller
 {
@@ -25,19 +26,28 @@ class TenantReviewController extends Controller
             403,
         );
 
-        Review::create([
+        $payload = [
             ...$validated,
-            'user_id' => $request->user()->id,
             'reviewer_name' => $request->user()->name,
             'is_published' => true,
-        ]);
+        ];
+
+        if (Schema::hasColumn('reviews', 'user_id')) {
+            $payload['user_id'] = $request->user()->id;
+        }
+
+        Review::create($payload);
 
         return back()->with('success', 'Ulasan Anda berhasil dikirim.');
     }
 
     public function update(Request $request, Review $review): RedirectResponse
     {
-        abort_unless($review->user_id === $request->user()->id, 403);
+        $isOwner = $review->user_id !== null
+            ? (int) $review->user_id === (int) $request->user()->id
+            : $review->reviewer_name === $request->user()->name;
+
+        abort_unless($isOwner, 403);
 
         $validated = $request->validate([
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
@@ -51,7 +61,11 @@ class TenantReviewController extends Controller
 
     public function destroy(Request $request, Review $review): RedirectResponse
     {
-        abort_unless($review->user_id === $request->user()->id, 403);
+        $isOwner = $review->user_id !== null
+            ? (int) $review->user_id === (int) $request->user()->id
+            : $review->reviewer_name === $request->user()->name;
+
+        abort_unless($isOwner, 403);
 
         $review->delete();
 
