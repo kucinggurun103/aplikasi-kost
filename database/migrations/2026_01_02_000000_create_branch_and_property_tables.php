@@ -45,7 +45,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
             $table->foreignId('room_category_id')->constrained('room_categories')->onDelete('cascade');
-            $table->string('type_code', 30)->unique();
+            $table->string('type_code', 100)->unique();
             $table->string('type_name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
@@ -65,8 +65,8 @@ return new class extends Migration
         Schema::create('room_units', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_type_id')->constrained('room_types')->onDelete('cascade');
-            $table->string('unit_code', 30)->unique();
-            $table->string('unit_number', 30);
+            $table->string('unit_code', 100)->unique();
+            $table->string('unit_number', 100);
             $table->string('building_name', 100)->nullable();
             $table->string('floor', 20)->nullable();
             $table->string('status', 30)->default('Available')->comment('Available, Occupied, Reserved, Maintenance, Inactive');

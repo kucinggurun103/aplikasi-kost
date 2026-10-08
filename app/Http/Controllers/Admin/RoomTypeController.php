@@ -29,7 +29,7 @@ class RoomTypeController extends Controller
         $validated = $request->validate([
             'branch_id' => 'required|exists:branches,id',
             'room_category_id' => 'required|exists:room_categories,id',
-            'type_code' => 'required|string|max:30|unique:room_types,type_code',
+            'type_code' => 'required|string|max:100|unique:room_types,type_code',
             'type_name' => 'required|string|max:255',
             'gender_type' => 'required|string|in:Pria,Wanita,Campur',
             'description' => 'nullable|string',
@@ -119,7 +119,7 @@ class RoomTypeController extends Controller
 
                 RoomUnit::create([
                     'room_type_id' => $roomType->id,
-                    'unit_code' => $roomType->type_code.'-U'.str_pad((string) $currentIndex, 2, '0', STR_PAD_LEFT),
+                    'unit_code' => RoomUnit::generateUnitCode($roomType->type_code, $roomType->id, $currentIndex),
                     'unit_number' => $unitName,
                     'floor' => $floor,
                     'status' => 'Available',
@@ -147,7 +147,7 @@ class RoomTypeController extends Controller
         $validated = $request->validate([
             'branch_id' => 'required|exists:branches,id',
             'room_category_id' => 'required|exists:room_categories,id',
-            'type_code' => 'required|string|max:30|unique:room_types,type_code,'.$roomType->id,
+            'type_code' => 'required|string|max:100|unique:room_types,type_code,'.$roomType->id,
             'type_name' => 'required|string|max:255',
             'gender_type' => 'required|string|in:Pria,Wanita,Campur',
             'description' => 'nullable|string',

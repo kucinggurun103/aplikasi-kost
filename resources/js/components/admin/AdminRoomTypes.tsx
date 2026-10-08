@@ -136,9 +136,21 @@ export default function AdminRoomTypes({
                 const b = branches.find(
                     (b) => b.id.toString() === data.branch_id.toString(),
                 );
-                if (b && b.code) branchPrefix = b.code.split('-')[0] + '-';
+                if (b && b.code) {
+                    const cleanCode = b.code
+                        .trim()
+                        .replace(/\s+/g, '-')
+                        .split('-')[0]
+                        .slice(0, 10)
+                        .toUpperCase();
+                    if (cleanCode) {
+                        branchPrefix = `${cleanCode}-`;
+                    }
+                }
             }
-            const kw = keyword ? keyword + '-' : 'TYP-';
+            const kw = keyword
+                ? `${keyword.trim().replace(/\s+/g, '-').slice(0, 8).toUpperCase()}-`
+                : 'TYP-';
             setData('type_code', `${branchPrefix}${kw}${timestamp}`);
         }
     }, [keyword, data.branch_id, timestamp, isEditing, showForm]);
