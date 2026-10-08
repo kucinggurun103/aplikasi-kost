@@ -70,6 +70,7 @@ return new class extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
             $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('reviewer_name');
             $table->decimal('rating', 3, 2)->default(0);
             $table->text('review_text');
