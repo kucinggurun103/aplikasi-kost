@@ -95,4 +95,3 @@ test('it can add room units to an existing room type with long type code', funct
         expect(strlen($unit->unit_code))->toBeLessThanOrEqual(30);
     }
 });
-
