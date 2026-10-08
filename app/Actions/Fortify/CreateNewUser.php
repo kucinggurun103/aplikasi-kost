@@ -41,10 +41,11 @@ class CreateNewUser implements CreatesNewUsers
         ]);
 
         // Assign 'tenant' role
-        $tenantRole = Role::where('code', 'tenant')->first();
-        if ($tenantRole) {
-            $user->roles()->attach($tenantRole->id);
-        }
+        $tenantRole = Role::firstOrCreate(
+            ['code' => 'tenant'],
+            ['name' => 'Penghuni', 'description' => 'Penyewa Kamar / Penghuni Kost', 'access_all_branches' => false]
+        );
+        $user->roles()->syncWithoutDetaching([$tenantRole->id]);
 
         return $user;
     }

@@ -53,7 +53,7 @@ it('can create a manual booking without payment proof', function () {
 
 it('can create a manual booking with payment proof directly', function () {
     Storage::fake('public');
-    $file = UploadedFile::fake()->image('proof.jpg');
+    $file = UploadedFile::fake()->create('proof.jpg', 100, 'image/jpeg');
 
     $response = $this->actingAs($this->admin)->post('/admin/transactions/bookings/manual', [
         'tenant_id' => $this->tenant->id,
@@ -103,7 +103,7 @@ it('can manually pay an existing invoice', function () {
         'grand_total' => 1500000,
     ]);
 
-    $file = UploadedFile::fake()->image('manual_proof.jpg');
+    $file = UploadedFile::fake()->create('manual_proof.jpg', 100, 'image/jpeg');
 
     $response = $this->actingAs($this->admin)->post("/admin/transactions/bookings/{$booking->id}/manual-pay", [
         'payment_id' => $invoice->id,
